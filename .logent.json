@@ -1,0 +1,21 @@
+{
+  "watchers": [
+    {
+      "watch": "sample/log.txt",
+      "tags": [
+        {
+          "key": "Name",
+          "value": "Sample Log"
+        }
+      ]
+    }
+  ],
+  "server": {
+    "host": "127.0.0.1",
+    "port": 8888
+  },
+  "retry": {
+    "max_retries": 3,
+    "max_queue_size": 1000
+  }
+}
