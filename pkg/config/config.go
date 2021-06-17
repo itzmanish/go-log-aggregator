@@ -47,3 +47,7 @@ func Load() error {
 func String() string {
 	return defaultConfig.String()
 }
+
+func NewConfig(opts ...Option) (Config, error) {
+	return NewViperConfig(opts...)
+}
