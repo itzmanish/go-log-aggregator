@@ -6,6 +6,36 @@
         {
           "key": "Name",
           "value": "Sample Log"
+        },
+        {
+          "key": "Type",
+          "value": "filesystem"
+        }
+      ]
+    },
+    {
+      "watch": "sample/log2.txt",
+      "tags": [
+        {
+          "key": "Name",
+          "value": "Sample Log 2"
+        },
+        {
+          "key": "Type",
+          "value": "filesystem"
+        }
+      ]
+    },
+    {
+      "watch": "sample/log3.txt",
+      "tags": [
+        {
+          "key": "Name",
+          "value": "Sample Log 3"
+        },
+        {
+          "key": "Type",
+          "value": "filesystem"
         }
       ]
     }
