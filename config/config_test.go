@@ -8,13 +8,13 @@ func TestConfig(t *testing.T) {
 	var err error
 
 	t.Run("Test Config creation", func(t *testing.T) {
-		_, err = NewConfig(WithConfigPath("../../.logent.json"))
+		_, err = NewConfig(WithConfigPath("../.logent.json"))
 		if err != nil {
 			t.Error(err)
 		}
 	})
 	t.Run("Init with wrong file path", func(t *testing.T) {
-		err = Init(WithConfigPath("../.logent.json"))
+		err = Init(WithConfigPath(".logent.json"))
 		if err == nil {
 			t.Error("Error is expected but got nil")
 		}
@@ -26,7 +26,7 @@ func TestConfig(t *testing.T) {
 		}
 	})
 	t.Run("Init with valid file path", func(t *testing.T) {
-		err = Init(WithConfigPath("../../.logent.json"))
+		err = Init(WithConfigPath("../.logent.json"))
 		if err != nil {
 			t.Error(err)
 		}
