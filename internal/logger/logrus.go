@@ -1,6 +1,10 @@
 package logger
 
 import (
+	"fmt"
+	"runtime"
+	"strings"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -10,67 +14,99 @@ type logrusLogger struct {
 }
 
 func (l *logrusLogger) Log(level Level, args ...interface{}) {
-	l.logrus.WithFields(l.Opts.Fields).Log(logrus.Level(level), args...)
+	entry := l.logrus.WithFields(l.Opts.Fields)
+	entry.Data["file"] = fileInfo(3)
+	entry.Log(logrus.Level(level), args...)
 }
 
 func (l *logrusLogger) Logf(level Level, format string, args ...interface{}) {
-	l.logrus.WithFields(l.Opts.Fields).Logf(logrus.Level(level), format, args...)
+	entry := l.logrus.WithFields(l.Opts.Fields)
+	entry.Data["file"] = fileInfo(3)
+	entry.Logf(logrus.Level(level), format, args...)
 }
 
 func (l *logrusLogger) Info(args ...interface{}) {
-	l.logrus.WithFields(l.Opts.Fields).Info(args...)
+	entry := l.logrus.WithFields(l.Opts.Fields)
+	entry.Data["file"] = fileInfo(3)
+	entry.Info(args...)
 }
 
 func (l *logrusLogger) Debug(args ...interface{}) {
-	l.logrus.WithFields(l.Opts.Fields).Debug(args...)
+	entry := l.logrus.WithFields(l.Opts.Fields)
+	entry.Data["file"] = fileInfo(3)
+	entry.Debug(args...)
 }
 
 func (l *logrusLogger) Error(args ...interface{}) {
-	l.logrus.WithFields(l.Opts.Fields).Error(args...)
+	entry := l.logrus.WithFields(l.Opts.Fields)
+	entry.Data["file"] = fileInfo(3)
+	entry.Error(args...)
 }
 
 func (l *logrusLogger) Warn(args ...interface{}) {
-	l.logrus.WithFields(l.Opts.Fields).Warn(args...)
+	entry := l.logrus.WithFields(l.Opts.Fields)
+	entry.Data["file"] = fileInfo(3)
+	entry.Warn(args...)
 }
 
 func (l *logrusLogger) Panic(args ...interface{}) {
-	l.logrus.WithFields(l.Opts.Fields).Panic(args...)
+	entry := l.logrus.WithFields(l.Opts.Fields)
+	entry.Data["file"] = fileInfo(3)
+	entry.Panic(args...)
 }
 
 func (l *logrusLogger) Fatal(args ...interface{}) {
-	l.logrus.WithFields(l.Opts.Fields).Fatal(args...)
+	entry := l.logrus.WithFields(l.Opts.Fields)
+	entry.Data["file"] = fileInfo(3)
+	entry.Fatal(args...)
 }
 
 func (l *logrusLogger) Trace(args ...interface{}) {
-	l.logrus.WithFields(l.Opts.Fields).Trace(args...)
+	entry := l.logrus.WithFields(l.Opts.Fields)
+	entry.Data["file"] = fileInfo(3)
+	entry.Trace(args...)
 }
 
 func (l *logrusLogger) Infof(format string, args ...interface{}) {
-	l.logrus.WithFields(l.Opts.Fields).Infof(format, args...)
+	entry := l.logrus.WithFields(l.Opts.Fields)
+	entry.Data["file"] = fileInfo(3)
+	entry.Infof(format, args...)
 }
 
 func (l *logrusLogger) Debugf(format string, args ...interface{}) {
-	l.logrus.WithFields(l.Opts.Fields).Debugf(format, args...)
+	entry := l.logrus.WithFields(l.Opts.Fields)
+	entry.Data["file"] = fileInfo(3)
+	entry.Debugf(format, args...)
 }
 
 func (l *logrusLogger) Errorf(format string, args ...interface{}) {
-	l.logrus.WithFields(l.Opts.Fields).Errorf(format, args...)
+	entry := l.logrus.WithFields(l.Opts.Fields)
+	entry.Data["file"] = fileInfo(3)
+	entry.Errorf(format, args...)
 }
 
 func (l *logrusLogger) Warnf(format string, args ...interface{}) {
-	l.logrus.WithFields(l.Opts.Fields).Warnf(format, args...)
+	entry := l.logrus.WithFields(l.Opts.Fields)
+	entry.Data["file"] = fileInfo(3)
+	entry.Warnf(format, args...)
 }
 
 func (l *logrusLogger) Panicf(format string, args ...interface{}) {
-	l.logrus.WithFields(l.Opts.Fields).Panicf(format, args...)
+	entry := l.logrus.WithFields(l.Opts.Fields)
+	entry.Data["file"] = fileInfo(3)
+	entry.Panicf(format, args...)
 }
 
 func (l *logrusLogger) Fatalf(format string, args ...interface{}) {
-	l.logrus.WithFields(l.Opts.Fields).Fatalf(format, args...)
+	entry := l.logrus.WithFields(l.Opts.Fields)
+	entry.Data["file"] = fileInfo(3)
+	entry.Fatalf(format, args...)
 }
 
 func (l *logrusLogger) Tracef(format string, args ...interface{}) {
-	l.logrus.WithFields(l.Opts.Fields).Tracef(format, args...)
+	entry := l.logrus.WithFields(l.Opts.Fields)
+	entry.Data["file"] = fileInfo(3)
+	entry.Tracef(format, args...)
 }
 
 func (l *logrusLogger) Init(opts ...Option) error {
@@ -94,6 +130,20 @@ func (l *logrusLogger) Load() error {
 
 func (l *logrusLogger) String() string {
 	return "Logrus logger"
+}
+
+func fileInfo(skip int) string {
+	_, file, line, ok := runtime.Caller(skip)
+	if !ok {
+		file = "<???>"
+		line = 1
+	} else {
+		slash := strings.LastIndex(file, "/")
+		if slash >= 0 {
+			file = file[slash+1:]
+		}
+	}
+	return fmt.Sprintf("%s:%d", file, line)
 }
 
 func newLogger(opts ...Option) Logger {
