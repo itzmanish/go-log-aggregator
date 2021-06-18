@@ -10,8 +10,8 @@ type Config interface {
 }
 
 type Watcher struct {
-	Watch string              `mapstructure:"watch"`
-	Tags  []map[string]string `mapstructure:"tags"`
+	Watch string                   `mapstructure:"watch" json:"watch"`
+	Tags  []map[string]interface{} `mapstructure:"tags" json:"tags"`
 }
 
 type Watchers []Watcher
