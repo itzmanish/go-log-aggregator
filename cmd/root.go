@@ -17,7 +17,7 @@ package cmd
 
 import (
 	"github.com/itzmanish/go-logent/cmd/collector"
-	"github.com/itzmanish/go-logent/pkg/config"
+	"github.com/itzmanish/go-logent/config"
 	"github.com/spf13/cobra"
 )
 
