@@ -15,7 +15,7 @@ limitations under the License.
 */
 package main
 
-import "github.com/itzmanish/go-logent/cmd"
+import "github.com/itzmanish/go-loganalyzer/cmd"
 
 func main() {
 	cmd.Execute()

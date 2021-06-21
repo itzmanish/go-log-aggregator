@@ -1,6 +1,6 @@
 package tool
 
-import "github.com/itzmanish/go-logent/config"
+import "github.com/itzmanish/go-loganalyzer/config"
 
 func FilterFileWatcher(watchers config.Watchers) config.Watchers {
 	filewatchers := config.Watchers{}

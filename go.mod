@@ -1,4 +1,4 @@
-module github.com/itzmanish/go-logent
+module github.com/itzmanish/go-loganalyzer
 
 go 1.16
 

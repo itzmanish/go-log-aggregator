@@ -16,8 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/itzmanish/go-logent/cmd/collector"
-	"github.com/itzmanish/go-logent/config"
+	"github.com/itzmanish/go-loganalyzer/config"
 	"github.com/spf13/cobra"
 )
 
@@ -25,13 +24,13 @@ var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "logent",
-	Short: "logent is Log analyzer agent which runs in host system and sends log from logfiles",
-
+	Use:     "loganalyzer",
+	Short:   "loganalyzer is Log analyzer agent which runs in host system and sends log from logfiles",
+	Version: "1.0.0",
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		collector.RunCollector(cmd, args)
+		cmd.Help()
 	},
 }
 
@@ -51,7 +50,7 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/.logent.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/.loganalyzer.yaml)")
 
 	// // Cobra also supports local flags, which will only run
 	// // when this action is called directly.

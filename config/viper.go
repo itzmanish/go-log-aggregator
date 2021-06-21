@@ -46,7 +46,7 @@ func (v *viperConfig) Load() error {
 
 		// Search config in config directory with name ".logent" (without extension).
 		viper.AddConfigPath(cfgDir)
-		viper.SetConfigName(".logent")
+		viper.SetConfigName(".loganalyzer")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
