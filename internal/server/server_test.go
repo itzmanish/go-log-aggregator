@@ -16,22 +16,19 @@ func TestTCPServer(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, server.Options().Port, port)
 	go func() {
-		exit := make(chan bool, 1)
 		time.Sleep(1 * time.Second)
 		conn, err := net.Dial("tcp4", ":"+port)
 		assert.Nil(t, err)
-		conn.SetReadDeadline(time.Now().Add(2 * time.Second))
+		conn.SetReadDeadline(time.Now().Add(5 * time.Second))
 		defer conn.Close()
 		go func() {
 			out, err := bufio.NewReader(conn).ReadString('\n')
 			assert.Nil(t, err)
 			assert.Equal(t, "Hi", out)
-			close(exit)
 		}()
 		n, err := conn.Write([]byte("Hi"))
 		assert.Nil(t, err)
 		assert.Greater(t, n, 0)
-		<-exit
 		err = server.Stop()
 		assert.Nil(t, err)
 	}()
