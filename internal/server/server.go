@@ -8,3 +8,11 @@ type Server interface {
 	Closed() bool
 	String() string
 }
+
+func NewServer(opts ...Option) Server {
+	t := tcpServer{
+		close: make(chan bool, 1),
+	}
+	t.Init(opts...)
+	return &t
+}

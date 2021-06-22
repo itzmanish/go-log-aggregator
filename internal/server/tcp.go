@@ -95,11 +95,3 @@ func (t *tcpServer) handleConnection(conn net.Conn) {
 		}
 	}
 }
-
-func NewServer(opts ...Option) Server {
-	t := tcpServer{
-		close: make(chan bool, 1),
-	}
-	t.Init(opts...)
-	return &t
-}
