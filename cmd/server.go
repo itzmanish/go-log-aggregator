@@ -16,6 +16,10 @@ limitations under the License.
 package cmd
 
 import (
+	"os"
+	"os/signal"
+
+	"github.com/itzmanish/go-loganalyzer/internal/logger"
 	"github.com/itzmanish/go-loganalyzer/internal/server"
 	"github.com/spf13/cobra"
 )
@@ -26,7 +30,22 @@ var serverCmd = &cobra.Command{
 	Short: "Log analyzer server to collect logs from agent and process it.",
 
 	Run: func(cmd *cobra.Command, args []string) {
-		server.Run(cmd, args)
+		port, err := cmd.Flags().GetString("port")
+		if err != nil {
+			logger.Fatal(err)
+		}
+		s := server.NewServer(server.WithPort(port))
+		exit := make(chan os.Signal, 1)
+		signal.Notify(exit, os.Interrupt)
+		go func() {
+			<-exit
+			if err := s.Stop(); err != nil {
+				logger.Fatal(err)
+			}
+		}()
+		if err := s.Start(); err != nil {
+			logger.Error(err)
+		}
 	},
 }
 
