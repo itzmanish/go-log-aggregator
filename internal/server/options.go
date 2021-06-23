@@ -1,13 +1,10 @@
 package server
 
-import "io"
-
-type Handler func(c io.ReadWriteCloser)
-
 type Options struct {
 	Port    string
 	Host    string
 	Handler Handler
+	Codec   Codec
 }
 
 type Option func(o *Options)
@@ -27,5 +24,11 @@ func WithPort(port string) Option {
 func WithHandler(handler Handler) Option {
 	return func(o *Options) {
 		o.Handler = handler
+	}
+}
+
+func WithCodec(c Codec) Option {
+	return func(o *Options) {
+		o.Codec = c
 	}
 }

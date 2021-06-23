@@ -1,5 +1,12 @@
 package server
 
+import (
+	"io"
+
+	"github.com/itzmanish/go-loganalyzer/internal/transport"
+)
+
+// Server
 type Server interface {
 	Init(opts ...Option) error
 	Options() Options
@@ -7,6 +14,11 @@ type Server interface {
 	Stop() error
 	Closed() bool
 	String() string
+}
+
+// Handler handles request from client
+type Handler interface {
+	Handle(req *transport.Packet, w io.Writer) error
 }
 
 func NewServer(opts ...Option) Server {

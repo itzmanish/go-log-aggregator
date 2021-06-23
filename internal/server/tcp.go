@@ -1,13 +1,14 @@
 package server
 
 import (
-	"bufio"
+	"encoding/json"
 	"errors"
 	"io"
 	"net"
 	"sync/atomic"
 
 	"github.com/itzmanish/go-loganalyzer/internal/logger"
+	"github.com/itzmanish/go-loganalyzer/internal/transport"
 )
 
 type tcpServer struct {
@@ -75,23 +76,27 @@ func (*tcpServer) String() string {
 
 func (t *tcpServer) handleConnection(conn net.Conn) {
 	defer conn.Close()
+	decoder := json.NewDecoder(conn)
 	for {
 		select {
 		case <-t.close:
 			return
 		default:
-			buffer, err := bufio.NewReader(conn).ReadBytes('\n')
+			var msg transport.Packet
+			err := decoder.Decode(&msg)
 			if err != nil {
 				if err != io.EOF {
 					logger.Error("read error", err)
 					return
 				}
 			}
-			if len(buffer) < 1 {
-				return
+			if t.opts.Handler != nil {
+				err = t.opts.Handler.Handle(&msg, conn)
+				if err != nil {
+					logger.Error(err)
+					return
+				}
 			}
-			logger.Info("Client message:", string(buffer[:len(buffer)-1]))
-			conn.Write(buffer)
 		}
 	}
 }
