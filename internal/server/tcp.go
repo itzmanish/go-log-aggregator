@@ -87,10 +87,10 @@ func (t *tcpServer) handleConnection(conn net.Conn) {
 			if err != nil {
 				if err != io.EOF {
 					logger.Error("read error", err)
-					return
 				}
+				return
 			}
-			if t.opts.Handler != nil {
+			if msg.ID != "" && t.opts.Handler != nil {
 				err = t.opts.Handler.Handle(&msg, conn)
 				if err != nil {
 					logger.Error(err)
