@@ -16,9 +16,14 @@ type Watcher struct {
 
 type Watchers []Watcher
 
+type ServerConfig struct {
+	Host string `mapstructure:"host"`
+	Port string `mapstructure:"port"`
+}
+
 type AgentConfig struct {
 	Watchers `mapstructure:"watchers"`
-	Server   map[string]string `mapstructure:"server"`
+	Server   ServerConfig      `mapstructure:"server"`
 	Retry    map[string]string `mapstructure:"retry"`
 }
 

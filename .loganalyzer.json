@@ -42,7 +42,7 @@
   ],
   "server": {
     "host": "127.0.0.1",
-    "port": 8888
+    "port": 33555
   },
   "retry": {
     "max_retries": 3,
