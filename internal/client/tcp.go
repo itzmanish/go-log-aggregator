@@ -1,16 +1,18 @@
 package client
 
 import (
-	"bufio"
 	"fmt"
 	"io"
 	"net"
 	"time"
+
+	"github.com/itzmanish/go-loganalyzer/internal/transport"
 )
 
 type tcpClient struct {
-	opts Options
-	conn net.Conn
+	opts  Options
+	conn  net.Conn
+	codec Codec
 }
 
 func (t *tcpClient) Init(opts ...Option) error {
@@ -19,6 +21,7 @@ func (t *tcpClient) Init(opts ...Option) error {
 	}
 	conn, err := net.Dial("tcp", t.opts.Address)
 	t.conn = conn
+	t.codec = NewCodec(t.conn)
 	return err
 }
 
@@ -26,30 +29,28 @@ func (t *tcpClient) Options() Options {
 	return t.opts
 }
 
-func (t *tcpClient) Send(data []byte) error {
+func (t *tcpClient) Send(data *transport.Packet) error {
 	if t.opts.Timeout != 0 {
 		t.conn.SetWriteDeadline(time.Now().Add(t.opts.Timeout))
 	}
-	_, err := t.conn.Write(data)
-	return err
+	return t.codec.Encode(data)
 }
 
-func (t *tcpClient) Recv(out chan []byte) error {
+func (t *tcpClient) Recv(out chan transport.Packet) error {
 	if t.opts.Timeout != 0 {
 		t.conn.SetReadDeadline(time.Now().Add(t.opts.Timeout))
 	}
 	for {
-		buffer, err := bufio.NewReader(t.conn).ReadBytes('\n')
+		var msg transport.Packet
+		err := t.codec.Decode(&msg)
 		if err != nil {
 			if err != io.EOF {
 				return err
 			}
 		}
-		if len(buffer) < 1 {
-			continue
-		}
-		fmt.Println(buffer)
-		out <- buffer
+
+		fmt.Println(msg)
+		out <- msg
 	}
 }
 

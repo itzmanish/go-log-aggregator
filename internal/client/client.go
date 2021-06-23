@@ -1,15 +1,20 @@
 package client
 
+import "github.com/itzmanish/go-loganalyzer/internal/transport"
+
 type Client interface {
 	Init(opts ...Option) error
 	Options() Options
-	Send([]byte) error
-	Recv(out chan []byte) error
+	Send(data *transport.Packet) error
+	Recv(out chan transport.Packet) error
 	String() string
 }
 
-func NewClient(opts ...Option) Client {
+func NewClient(opts ...Option) (Client, error) {
 	t := &tcpClient{}
-	t.Init(opts...)
-	return t
+	err := t.Init(opts...)
+	if err != nil {
+		return nil, err
+	}
+	return t, nil
 }

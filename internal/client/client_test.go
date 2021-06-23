@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/itzmanish/go-loganalyzer/internal/transport"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -41,8 +42,9 @@ func TestTCPClient(t *testing.T) {
 	var client Client
 
 	t.Run("TestNewClient", func(t *testing.T) {
-		client = NewClient(WithAddress(l.Addr().String()))
+		client, err := NewClient(WithAddress(l.Addr().String()))
 		assert.NotNil(t, client)
+		assert.Nil(t, err)
 	})
 
 	t.Run("TestInit", func(t *testing.T) {
@@ -60,13 +62,15 @@ func TestTCPClient(t *testing.T) {
 	})
 
 	t.Run("TestSend", func(t *testing.T) {
-		data := []byte("Hi")
+		data := &transport.Packet{
+			ID: "2",
+		}
 		err := client.Send(data)
 		assert.Nil(t, err)
 	})
 
 	t.Run("TestRecv", func(t *testing.T) {
-		out := make(chan []byte)
+		out := make(chan transport.Packet)
 		go func() {
 			client.Recv(out)
 			close(out)
