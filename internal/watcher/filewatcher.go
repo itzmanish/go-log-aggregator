@@ -6,6 +6,7 @@ import (
 	"github.com/hpcloud/tail"
 	"github.com/itzmanish/go-loganalyzer/config"
 	"github.com/itzmanish/go-loganalyzer/internal/logger"
+	"github.com/itzmanish/go-loganalyzer/tool"
 )
 
 type Result struct {
@@ -31,7 +32,9 @@ func NewFileWatcher(files config.Watchers) Watcher {
 func (fw *fileWatcher) Watch() {
 	for _, file := range fw.files {
 		go func(file config.Watcher) {
-			t, err := tail.TailFile(file.Watch, tail.Config{Follow: true})
+			t, err := tail.TailFile(file.Watch, tail.Config{Follow: true, Location: &tail.SeekInfo{
+				Offset: tool.GetSeekInfo(file.Watch),
+			}})
 			if err != nil {
 				logger.Error(err)
 			}
