@@ -4,6 +4,8 @@ go 1.16
 
 require (
 	github.com/hpcloud/tail v1.0.0
+	github.com/philippgille/gokv v0.6.0 // indirect
+	github.com/philippgille/gokv/file v0.6.0 // indirect
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/viper v1.7.0
