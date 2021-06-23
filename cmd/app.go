@@ -22,8 +22,8 @@ import (
 
 var cfgFile string
 
-// rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
+// appCmd represents the base command when called without any subcommands
+var appCmd = &cobra.Command{
 	Use:     "loganalyzer",
 	Short:   "loganalyzer is Log analyzer agent which runs in host system and sends log from logfiles",
 	Version: "1.0.0",
@@ -35,9 +35,9 @@ var rootCmd = &cobra.Command{
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
+// This is called by main.main(). It only needs to happen once to the appCmd.
 func Execute() {
-	cobra.CheckErr(rootCmd.Execute())
+	cobra.CheckErr(appCmd.Execute())
 }
 
 func init() {
@@ -50,9 +50,9 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/.loganalyzer.yaml)")
+	appCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/.loganalyzer.yaml)")
 
 	// // Cobra also supports local flags, which will only run
 	// // when this action is called directly.
-	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// appCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

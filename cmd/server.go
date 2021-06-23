@@ -50,7 +50,7 @@ var serverCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(serverCmd)
+	appCmd.AddCommand(serverCmd)
 
 	// Here you will define your flags and configuration settings.
 
