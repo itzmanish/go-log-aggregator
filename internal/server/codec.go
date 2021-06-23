@@ -28,7 +28,7 @@ func (jc *jsonCodec) String() string {
 	return "Json"
 }
 
-func NewCodec(src io.ReadWriteCloser) Codec {
+func NewCodec(src io.ReadWriter) Codec {
 	j := &jsonCodec{
 		jEncoder: json.NewEncoder(src),
 		jDecoder: json.NewDecoder(src),
