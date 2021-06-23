@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"io"
+	"time"
 
 	"github.com/itzmanish/go-loganalyzer/internal/logger"
 	"github.com/itzmanish/go-loganalyzer/internal/server"
@@ -26,16 +27,15 @@ func (h *srvHandler) Handle(req *transport.Packet, w io.Writer) error {
 		logger.Info("Got your request: ", req.ID)
 		err := h.store.Set(req.ID, req.Body)
 		if err != nil {
-			logger.Error(err)
 			return err
 		}
 		ack := &transport.Packet{
-			ID:  req.ID,
-			Ack: true,
+			ID:        req.ID,
+			Ack:       true,
+			Timestamp: time.Now(),
 		}
 		err = json.NewEncoder(w).Encode(ack)
 		if err != nil {
-			logger.Error(err)
 			return err
 		}
 
