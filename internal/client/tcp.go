@@ -1,17 +1,14 @@
 package client
 
 import (
-	"io"
+	"encoding/json"
 	"net"
 	"time"
-
-	"github.com/itzmanish/go-loganalyzer/internal/transport"
 )
 
 type tcpClient struct {
-	opts  Options
-	conn  net.Conn
-	codec Codec
+	opts Options
+	conn net.Conn
 }
 
 func (t *tcpClient) Init(opts ...Option) error {
@@ -20,7 +17,6 @@ func (t *tcpClient) Init(opts ...Option) error {
 	}
 	conn, err := net.Dial("tcp", t.opts.Address)
 	t.conn = conn
-	t.codec = NewCodec(t.conn)
 	return err
 }
 
@@ -28,29 +24,23 @@ func (t *tcpClient) Options() Options {
 	return t.opts
 }
 
-func (t *tcpClient) Send(data *transport.Packet) error {
+func (t *tcpClient) Send(data interface{}) error {
 	if t.opts.Timeout != 0 {
 		t.conn.SetWriteDeadline(time.Now().Add(t.opts.Timeout))
 	}
-	return t.codec.Encode(data)
+	db, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+	_, err = t.conn.Write(db)
+	return err
 }
 
-func (t *tcpClient) Recv(out chan transport.Packet) error {
+func (t *tcpClient) Recv(out interface{}) error {
 	if t.opts.Timeout != 0 {
 		t.conn.SetReadDeadline(time.Now().Add(t.opts.Timeout))
 	}
-	for {
-		var msg transport.Packet
-		err := t.codec.Decode(&msg)
-		if err != nil {
-			if err != io.EOF {
-				return err
-			}
-			return nil
-		}
-
-		out <- msg
-	}
+	return json.NewDecoder(t.conn).Decode(&out)
 }
 
 func (t *tcpClient) String() string {
