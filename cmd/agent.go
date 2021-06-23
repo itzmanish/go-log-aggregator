@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"os"
+	"os/signal"
 	"time"
 
 	"github.com/itzmanish/go-loganalyzer/config"
@@ -45,10 +47,31 @@ func RunAgent(cmd *cobra.Command, args []string) {
 	if err != nil {
 		logger.Fatal(err)
 	}
-	for v := range w.Result() {
-		err = cli.Send(&transport.Packet{ID: "1", Cmd: "log", Body: v})
-		if err != nil {
-			logger.Error(err)
+	go func() {
+		for v := range w.Result() {
+			err = cli.Send(&transport.Packet{ID: "1", Cmd: "log", Body: &transport.LogBody{
+				Name:      v.Name,
+				Log:       v.Log,
+				Tags:      v.Tags,
+				Timestamp: v.Timestamp,
+			}, Timestamp: time.Now()})
+			if err != nil {
+				logger.Error(err)
+			}
 		}
+	}()
+	exit := make(chan os.Signal, 1)
+	signal.Notify(exit, os.Interrupt)
+	go func() {
+		for v := range cli.Out() {
+			logger.Info(*v)
+		}
+	}()
+
+	<-exit
+	err = cli.Close()
+	if err != nil {
+		logger.Error(err)
 	}
+	logger.Info("Shutting down agent...")
 }
