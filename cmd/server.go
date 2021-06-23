@@ -22,6 +22,7 @@ import (
 	"github.com/itzmanish/go-loganalyzer/handler"
 	"github.com/itzmanish/go-loganalyzer/internal/logger"
 	"github.com/itzmanish/go-loganalyzer/internal/server"
+	"github.com/itzmanish/go-loganalyzer/internal/store"
 	"github.com/spf13/cobra"
 )
 
@@ -35,7 +36,11 @@ var serverCmd = &cobra.Command{
 		if err != nil {
 			logger.Fatal(err)
 		}
-		hdl := handler.NewHandler()
+		store, err := store.NewFileStore(store.WithDirectory("sample"))
+		if err != nil {
+			logger.Fatal(err)
+		}
+		hdl := handler.NewHandler(store)
 		s := server.NewServer(server.WithPort(port), server.WithHandler(hdl))
 		exit := make(chan os.Signal, 1)
 		signal.Notify(exit, os.Interrupt)
