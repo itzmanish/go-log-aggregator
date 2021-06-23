@@ -13,7 +13,7 @@ type Result struct {
 	Name string `json:"name"`
 	// TODO: right now tags should be sent every time will fix it later for performance improvements
 	Tags      []map[string]interface{} `json:"tags"`
-	Logs      string                   `json:"log"`
+	Log       string                   `json:"log"`
 	Timestamp time.Time                `json:"time"`
 }
 
@@ -39,7 +39,7 @@ func (fw *fileWatcher) Watch() {
 				logger.Error(err)
 			}
 			for line := range t.Lines {
-				res := Result{Name: file.Watch, Tags: file.Tags, Logs: line.Text, Timestamp: line.Time}
+				res := Result{Name: file.Watch, Tags: file.Tags, Log: line.Text, Timestamp: line.Time}
 				fw.result <- res
 			}
 		}(file)
