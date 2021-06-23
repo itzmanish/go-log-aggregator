@@ -19,6 +19,7 @@ import (
 	"os"
 	"os/signal"
 
+	"github.com/itzmanish/go-loganalyzer/handler"
 	"github.com/itzmanish/go-loganalyzer/internal/logger"
 	"github.com/itzmanish/go-loganalyzer/internal/server"
 	"github.com/spf13/cobra"
@@ -34,7 +35,8 @@ var serverCmd = &cobra.Command{
 		if err != nil {
 			logger.Fatal(err)
 		}
-		s := server.NewServer(server.WithPort(port))
+		hdl := handler.NewHandler()
+		s := server.NewServer(server.WithPort(port), server.WithHandler(hdl))
 		exit := make(chan os.Signal, 1)
 		signal.Notify(exit, os.Interrupt)
 		go func() {
