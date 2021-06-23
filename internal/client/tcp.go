@@ -1,7 +1,6 @@
 package client
 
 import (
-	"fmt"
 	"io"
 	"net"
 	"time"
@@ -47,9 +46,9 @@ func (t *tcpClient) Recv(out chan transport.Packet) error {
 			if err != io.EOF {
 				return err
 			}
+			return nil
 		}
 
-		fmt.Println(msg)
 		out <- msg
 	}
 }

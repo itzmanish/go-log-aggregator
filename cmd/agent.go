@@ -1,8 +1,12 @@
 package cmd
 
 import (
+	"time"
+
 	"github.com/itzmanish/go-loganalyzer/config"
+	"github.com/itzmanish/go-loganalyzer/internal/client"
 	"github.com/itzmanish/go-loganalyzer/internal/logger"
+	"github.com/itzmanish/go-loganalyzer/internal/transport"
 	"github.com/itzmanish/go-loganalyzer/internal/watcher"
 	"github.com/itzmanish/go-loganalyzer/tool"
 	"github.com/spf13/cobra"
@@ -31,8 +35,20 @@ func RunAgent(cmd *cobra.Command, args []string) {
 	w := watcher.NewFileWatcher(files)
 	w.Watch()
 	defer w.Close()
-	for v := range w.Result() {
-		logger.Info(v)
-	}
 
+	serverConfig := config.ServerConfig{}
+	err = config.Scan("server", &serverConfig)
+	if err != nil {
+		logger.Fatal(err)
+	}
+	cli, err := client.NewClient(client.WithAddress(serverConfig.Host+":"+serverConfig.Port), client.WithTimeout(5*time.Second))
+	if err != nil {
+		logger.Fatal(err)
+	}
+	for v := range w.Result() {
+		err = cli.Send(&transport.Packet{ID: "1", Cmd: "log", Body: v})
+		if err != nil {
+			logger.Error(err)
+		}
+	}
 }
