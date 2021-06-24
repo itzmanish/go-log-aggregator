@@ -9,6 +9,11 @@ type Store interface {
 	String() string
 }
 
+var Stores map[string]func(opts ...Option) (Store, error) = map[string]func(opts ...Option) (Store, error){
+	"file": NewFileStore,
+	"s3":   NewS3Store,
+}
+
 var defaultStore, _ = NewFileStore()
 
 func Get(key string, value interface{}) (bool, error) {

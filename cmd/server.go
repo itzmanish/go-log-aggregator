@@ -30,16 +30,41 @@ import (
 var serverCmd = &cobra.Command{
 	Use:   "server",
 	Short: "Log analyzer server to collect logs from agent and process it.",
-
 	Run: func(cmd *cobra.Command, args []string) {
 		port, err := cmd.Flags().GetString("port")
 		if err != nil {
 			logger.Fatal(err)
 		}
-		store, err := store.NewFileStore(store.WithDirectory("sample"))
+		storeName, err := cmd.Flags().GetString("store")
 		if err != nil {
 			logger.Fatal(err)
 		}
+		sProvider, ok := store.Stores[storeName]
+		if !ok {
+			logger.Fatal("Store Provider doesn't exits. please select a different store provider.")
+		}
+		sopts := []store.Option{}
+		if bn, err := cmd.Flags().GetString("bucket"); bn != "" && err == nil {
+			sopts = append(sopts, store.WithDirectory(bn))
+		}
+		if ep, err := cmd.Flags().GetString("endpoint"); ep != "" && err == nil {
+			sopts = append(sopts, store.WithS3Endpoint(ep))
+		}
+		if epm, err := cmd.Flags().GetBool("pathaddressingmode"); epm && err == nil {
+			sopts = append(sopts, store.WithPathStyleAddressing(epm))
+		}
+		if ak, err := cmd.Flags().GetString("aws_access_key"); ak != "" && err == nil {
+			sopts = append(sopts, store.WithAWSAccessKey(ak))
+		}
+		if sak, err := cmd.Flags().GetString("aws_secret_key"); sak != "" && err == nil {
+			sopts = append(sopts, store.WithAWSSecretAccessKey(sak))
+		}
+
+		store, err := sProvider(sopts...)
+		if err != nil {
+			logger.Fatal(err)
+		}
+		logger.Info("Selected storage backend is ", store.String())
 		hdl := handler.NewHandler(store)
 		s := server.NewServer(server.WithPort(port), server.WithHandler(hdl))
 		exit := make(chan os.Signal, 1)
@@ -69,4 +94,21 @@ func init() {
 	// is called directly, e.g.:
 	// serverCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	serverCmd.Flags().StringP("port", "p", "33555", "log analyzer server port")
+	serverCmd.Flags().StringP("store", "s", "file", "Store backend for logs")
+	serverCmd.Flags().String("endpoint", "", "S3 enpoint")
+	serverCmd.Flags().Bool("pathaddressingmode", true, `S3 differentiates between "virtual hosted bucket addressing" and "path-style addressing".
+Example URL for the virtual host style: http://BUCKET.s3.amazonaws.com/KEY.
+Example UL for the path style: http://s3.amazonaws.com/BUCKET/KEY.
+Most S3-compatible servers work with both styles,
+but some work only with the virtual host style 
+(e.g. Alibaba Cloud Object Storage Service (OSS))
+and some work only with the path style 
+(especially self-hosted services like a Minio server running on localhost).`)
+	serverCmd.Flags().String("bucket", "", "Bucket Name for s3 and Directory name for local fs")
+	serverCmd.Flags().String("aws_access_key", "", `AWS Access key for s3.
+Optional (read from shared credentials file or environment variable if not set).
+Environment variable: 'AWS_ACCESS_KEY_ID'.`)
+	serverCmd.Flags().String("aws_secret_key", "", `AWS Secret key for s3.
+Optional (read from shared credentials file or environment variable if not set).
+Environment variable: "AWS_SECRET_ACCESS_KEY".`)
 }
