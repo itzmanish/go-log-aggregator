@@ -50,7 +50,7 @@
     "aws_secret_key": "minioadmin",
     "path_addressing_mode": true
   },
-  "retry": {
+  "agent": {
     "max_retries": 3,
     "max_queue_size": 1000
   }

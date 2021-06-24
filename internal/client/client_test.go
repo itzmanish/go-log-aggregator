@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/itzmanish/go-loganalyzer/internal/codec"
 	"github.com/stretchr/testify/assert"
 )
@@ -63,7 +64,7 @@ func TestTCPClient(t *testing.T) {
 
 	t.Run("TestSend", func(t *testing.T) {
 		data := &codec.Packet{
-			ID: "2",
+			ID: uuid.New(),
 		}
 		err := client.Send(data)
 		assert.Nil(t, err)

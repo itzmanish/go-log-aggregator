@@ -1,12 +1,16 @@
 package client
 
 import (
+	"context"
+	"errors"
 	"io"
 	"net"
+	"syscall"
 	"time"
 
 	"github.com/itzmanish/go-loganalyzer/internal/codec"
 	jc "github.com/itzmanish/go-loganalyzer/internal/codec/json"
+	"github.com/itzmanish/go-loganalyzer/internal/logger"
 )
 
 type tcpClient struct {
@@ -19,6 +23,15 @@ func (t *tcpClient) Init(opts ...Option) error {
 	for _, o := range opts {
 		o(&t.opts)
 	}
+	err := t.Connect()
+	if err != nil {
+		return err
+	}
+	go t.Read()
+	return nil
+}
+
+func (t *tcpClient) Connect() error {
 	conn, err := net.Dial("tcp", t.opts.Address)
 	if err != nil {
 		return err
@@ -30,12 +43,7 @@ func (t *tcpClient) Init(opts ...Option) error {
 		return err
 	}
 
-	err = conn.(*net.TCPConn).SetKeepAlivePeriod(30 * time.Second)
-	if err != nil {
-		return err
-	}
-	go t.Read()
-	return err
+	return conn.(*net.TCPConn).SetKeepAlivePeriod(30 * time.Second)
 }
 
 func (t *tcpClient) Options() Options {
@@ -46,17 +54,44 @@ func (t *tcpClient) Out() chan *codec.Packet {
 	return t.out
 }
 
-func (t *tcpClient) Send(data interface{}) error {
+func (t *tcpClient) send(data interface{}) error {
 	if t.opts.Timeout != 0 {
-		t.conn.SetWriteDeadline(time.Now().Add(t.opts.Timeout))
+		t.conn.SetWriteDeadline(time.Now().Add(5 * time.Second))
 	}
 	return t.opts.Codec.Write(data)
-	// db, err := json.Marshal(data)
-	// if err != nil {
-	// 	return err
-	// }
-	// _, err = t.conn.Write(db)
-	// return err
+}
+
+func (t *tcpClient) Send(data interface{}) error {
+	tsend := t.send
+	ctx, cancel := context.WithTimeout(context.Background(), t.opts.Timeout)
+	defer cancel()
+	ch := make(chan error, t.opts.MaxRetries+1)
+	var terr error
+
+	for i := 0; i < t.opts.MaxRetries; i++ {
+		go func() {
+			ch <- tsend(data)
+		}()
+
+		select {
+		case <-ctx.Done():
+			return errors.New("timeout hit")
+
+		case err := <-ch:
+			// if the call succeeded lets bail early
+			if err == nil {
+				return nil
+			}
+			if errors.Is(err, syscall.EPIPE) {
+				t.conn.Close()
+				err = t.Connect()
+			}
+			terr = err
+		}
+	}
+
+	return terr
+
 }
 
 // Recv is for recieving however it is not working
@@ -78,7 +113,12 @@ func (t *tcpClient) Read() error {
 		}
 
 		if err != nil {
-			return err
+			if neterr, ok := err.(net.Error); ok && neterr.Timeout() {
+				logger.Error(neterr)
+				// return fmt.Errorf("TCP timeout : %s", err.Error())
+			} else {
+				logger.Errorf("Received error decoding message: %s", err.Error())
+			}
 		}
 
 		t.out <- &msg
@@ -98,7 +138,8 @@ func NewTcpClient(opts ...Option) (Client, error) {
 	t := &tcpClient{
 		out: make(chan *codec.Packet),
 		opts: Options{
-			Codec: jc.NewCodec(),
+			Codec:      jc.NewCodec(),
+			MaxRetries: 2,
 		},
 	}
 	err := t.Init(opts...)

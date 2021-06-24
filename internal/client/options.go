@@ -8,7 +8,7 @@ import (
 
 type Options struct {
 	Address    string
-	MaxRetries int32
+	MaxRetries int
 	Timeout    time.Duration
 	Codec      codec.Codec
 }
@@ -21,7 +21,7 @@ func WithAddress(addr string) Option {
 	}
 }
 
-func WithMaxRetries(retries int32) Option {
+func WithMaxRetries(retries int) Option {
 	return func(o *Options) {
 		o.MaxRetries = retries
 	}

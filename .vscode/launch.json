@@ -17,7 +17,7 @@
 			"args": [
 				"--config",
 				".loganalyzer.json",
-				"server"
+				"agent"
 			],
 			"showLog": true
 		}
