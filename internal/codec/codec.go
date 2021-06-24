@@ -5,6 +5,8 @@ import (
 	"errors"
 	"io"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 var (
@@ -43,7 +45,7 @@ type LogBody struct {
 // Packet is type of every packet that gets transported from client to server to client.
 type Packet struct {
 	// ID of packet
-	ID string `json:"id"`
+	ID uuid.UUID `json:"id"`
 	// Cmd is command containing the packets
 	Cmd string `json:"cmd"`
 	// Body is body of associated with command

@@ -3,6 +3,7 @@ module github.com/itzmanish/go-loganalyzer
 go 1.16
 
 require (
+	github.com/google/uuid v1.2.0
 	github.com/hpcloud/tail v1.0.0
 	github.com/philippgille/gokv v0.6.0
 	github.com/philippgille/gokv/file v0.6.0

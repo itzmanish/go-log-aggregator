@@ -23,7 +23,7 @@ func (h *srvHandler) Handle(req *codec.Packet) (*codec.Packet, error) {
 	switch req.Cmd {
 	case "log":
 		logger.Info("Got your request: ", req.ID)
-		err := h.store.Set(req.ID, req.Body)
+		err := h.store.Set(req.ID.String(), req.Body)
 		if err != nil {
 			return nil, err
 		}

@@ -6,6 +6,7 @@ import (
 	"net"
 	"sync/atomic"
 
+	"github.com/google/uuid"
 	"github.com/itzmanish/go-loganalyzer/internal/codec"
 	"github.com/itzmanish/go-loganalyzer/internal/codec/json"
 	"github.com/itzmanish/go-loganalyzer/internal/logger"
@@ -90,7 +91,7 @@ func (t *tcpServer) handleConnection(conn net.Conn) {
 				}
 				return
 			}
-			if msg.ID != "" && t.opts.Handler != nil {
+			if msg.ID != uuid.Nil && t.opts.Handler != nil {
 				res, err := t.opts.Handler.Handle(&msg)
 				if err != nil {
 					err = t.opts.Codec.Write(&codec.Packet{
