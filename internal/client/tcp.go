@@ -20,8 +20,20 @@ func (t *tcpClient) Init(opts ...Option) error {
 		o(&t.opts)
 	}
 	conn, err := net.Dial("tcp", t.opts.Address)
+	if err != nil {
+		return err
+	}
 	t.conn = conn
 	t.opts.Codec.Init(conn)
+	err = conn.(*net.TCPConn).SetKeepAlive(true)
+	if err != nil {
+		return err
+	}
+
+	err = conn.(*net.TCPConn).SetKeepAlivePeriod(30 * time.Second)
+	if err != nil {
+		return err
+	}
 	go t.Read()
 	return err
 }
