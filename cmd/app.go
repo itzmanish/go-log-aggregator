@@ -42,7 +42,7 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(func() {
-		_, err := config.NewViperConfig(config.WithConfigPath(cfgFile))
+		_, err := config.NewViperConfig(config.WithConfigPath(cfgFile), config.WithCobraCmd(serverCmd))
 		cobra.CheckErr(err)
 	})
 

@@ -1,8 +1,12 @@
 package config
 
+import "github.com/spf13/cobra"
+
 type ConfigOption struct {
 	// Path of config file
 	Path string
+	// Cobra cmd
+	Cmd *cobra.Command
 }
 
 type Option func(o *ConfigOption)
