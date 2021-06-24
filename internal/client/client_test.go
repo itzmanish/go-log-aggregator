@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/itzmanish/go-loganalyzer/internal/transport"
+	"github.com/itzmanish/go-loganalyzer/internal/codec"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -62,7 +62,7 @@ func TestTCPClient(t *testing.T) {
 	})
 
 	t.Run("TestSend", func(t *testing.T) {
-		data := &transport.Packet{
+		data := &codec.Packet{
 			ID: "2",
 		}
 		err := client.Send(data)
@@ -70,7 +70,7 @@ func TestTCPClient(t *testing.T) {
 	})
 
 	t.Run("TestRecv", func(t *testing.T) {
-		out := make(chan transport.Packet)
+		out := make(chan codec.Packet)
 		go func() {
 			client.Recv(out)
 			close(out)

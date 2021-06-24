@@ -1,14 +1,12 @@
 package handler
 
 import (
-	"encoding/json"
-	"io"
 	"time"
 
+	"github.com/itzmanish/go-loganalyzer/internal/codec"
 	"github.com/itzmanish/go-loganalyzer/internal/logger"
 	"github.com/itzmanish/go-loganalyzer/internal/server"
 	"github.com/itzmanish/go-loganalyzer/internal/store"
-	"github.com/itzmanish/go-loganalyzer/internal/transport"
 )
 
 type srvHandler struct {
@@ -21,26 +19,23 @@ func NewHandler(s store.Store) server.Handler {
 	}
 }
 
-func (h *srvHandler) Handle(req *transport.Packet, w io.Writer) error {
+func (h *srvHandler) Handle(req *codec.Packet) (*codec.Packet, error) {
 	switch req.Cmd {
 	case "log":
 		logger.Info("Got your request: ", req.ID)
 		err := h.store.Set(req.ID, req.Body)
 		if err != nil {
-			return err
+			return nil, err
 		}
-		ack := &transport.Packet{
+		ack := &codec.Packet{
 			ID:        req.ID,
 			Ack:       true,
 			Timestamp: time.Now(),
 		}
-		err = json.NewEncoder(w).Encode(ack)
-		if err != nil {
-			return err
-		}
+		return ack, nil
 
 	default:
 		logger.Info(req)
 	}
-	return nil
+	return nil, nil
 }

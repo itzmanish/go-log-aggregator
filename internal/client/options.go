@@ -1,11 +1,16 @@
 package client
 
-import "time"
+import (
+	"time"
+
+	"github.com/itzmanish/go-loganalyzer/internal/codec"
+)
 
 type Options struct {
 	Address    string
 	MaxRetries int32
 	Timeout    time.Duration
+	Codec      codec.Codec
 }
 
 type Option func(o *Options)
@@ -25,5 +30,11 @@ func WithMaxRetries(retries int32) Option {
 func WithTimeout(timeout time.Duration) Option {
 	return func(o *Options) {
 		o.Timeout = timeout
+	}
+}
+
+func WithCodec(c codec.Codec) Option {
+	return func(o *Options) {
+		o.Codec = c
 	}
 }

@@ -1,14 +1,14 @@
 package server
 
 import (
-	"encoding/json"
 	"errors"
 	"io"
 	"net"
 	"sync/atomic"
 
+	"github.com/itzmanish/go-loganalyzer/internal/codec"
+	"github.com/itzmanish/go-loganalyzer/internal/codec/json"
 	"github.com/itzmanish/go-loganalyzer/internal/logger"
-	"github.com/itzmanish/go-loganalyzer/internal/transport"
 )
 
 type tcpServer struct {
@@ -75,15 +75,15 @@ func (*tcpServer) String() string {
 }
 
 func (t *tcpServer) handleConnection(conn net.Conn) {
-	defer conn.Close()
-	decoder := json.NewDecoder(conn)
+	defer t.opts.Codec.Close()
+	t.opts.Codec.Init(conn)
 	for {
 		select {
 		case <-t.close:
 			return
 		default:
-			var msg transport.Packet
-			err := decoder.Decode(&msg)
+			var msg codec.Packet
+			err := t.opts.Codec.Read(&msg)
 			if err != nil {
 				if err != io.EOF {
 					logger.Error("read error", err)
@@ -91,7 +91,16 @@ func (t *tcpServer) handleConnection(conn net.Conn) {
 				return
 			}
 			if msg.ID != "" && t.opts.Handler != nil {
-				err = t.opts.Handler.Handle(&msg, conn)
+				res, err := t.opts.Handler.Handle(&msg)
+				if err != nil {
+					err = t.opts.Codec.Write(&codec.Packet{
+						Error: err,
+					})
+					logger.Error(err)
+					return
+
+				}
+				err = t.opts.Codec.Write(res)
 				if err != nil {
 					logger.Error(err)
 					return
@@ -99,4 +108,15 @@ func (t *tcpServer) handleConnection(conn net.Conn) {
 			}
 		}
 	}
+}
+
+func NewTcpServer(opts ...Option) Server {
+	t := tcpServer{
+		close: make(chan bool, 1),
+		opts: Options{
+			Codec: json.NewCodec(),
+		},
+	}
+	t.Init(opts...)
+	return &t
 }

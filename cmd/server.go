@@ -84,15 +84,6 @@ var serverCmd = &cobra.Command{
 func init() {
 	appCmd.AddCommand(serverCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// serverCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// serverCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	serverCmd.Flags().StringP("server.port", "p", "33555", "log analyzer server port")
 	serverCmd.Flags().StringP("server.store", "s", "file", "Store backend for logs")
 	serverCmd.Flags().String("server.endpoint", "", "S3 enpoint")

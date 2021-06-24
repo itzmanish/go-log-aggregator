@@ -7,8 +7,8 @@ import (
 
 	"github.com/itzmanish/go-loganalyzer/config"
 	"github.com/itzmanish/go-loganalyzer/internal/client"
+	"github.com/itzmanish/go-loganalyzer/internal/codec"
 	"github.com/itzmanish/go-loganalyzer/internal/logger"
-	"github.com/itzmanish/go-loganalyzer/internal/transport"
 	"github.com/itzmanish/go-loganalyzer/internal/watcher"
 	"github.com/itzmanish/go-loganalyzer/tool"
 	"github.com/spf13/cobra"
@@ -49,7 +49,7 @@ func RunAgent(cmd *cobra.Command, args []string) {
 	}
 	go func() {
 		for v := range w.Result() {
-			err = cli.Send(&transport.Packet{ID: "1", Cmd: "log", Body: &transport.LogBody{
+			err = cli.Send(&codec.Packet{ID: "1", Cmd: "log", Body: &codec.LogBody{
 				Name:      v.Name,
 				Log:       v.Log,
 				Tags:      v.Tags,

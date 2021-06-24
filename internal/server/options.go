@@ -1,10 +1,12 @@
 package server
 
+import "github.com/itzmanish/go-loganalyzer/internal/codec"
+
 type Options struct {
 	Port    string
 	Host    string
 	Handler Handler
-	Codec   Codec
+	Codec   codec.Codec
 }
 
 type Option func(o *Options)
@@ -27,7 +29,7 @@ func WithHandler(handler Handler) Option {
 	}
 }
 
-func WithCodec(c Codec) Option {
+func WithCodec(c codec.Codec) Option {
 	return func(o *Options) {
 		o.Codec = c
 	}

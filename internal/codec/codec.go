@@ -1,9 +1,34 @@
-package transport
+// Package codec is an interface for encoding messages
+package codec
 
 import (
-	"encoding/json"
+	"errors"
+	"io"
 	"time"
 )
+
+var (
+	ErrInvalidMessage = errors.New("invalid message")
+)
+
+// Takes in a connection/buffer and returns a new Codec
+type NewCodec func(io.ReadWriteCloser) Codec
+
+type Codec interface {
+	Reader
+	Writer
+	Init(io.ReadWriteCloser)
+	Close() error
+	String() string
+}
+
+type Reader interface {
+	Read(interface{}) error
+}
+
+type Writer interface {
+	Write(interface{}) error
+}
 
 // LogBody describe body of a single packets.
 // It contains the name of log with log to store and tags
@@ -25,10 +50,8 @@ type Packet struct {
 	Body *LogBody `json:"body"`
 	// Ack acknowledges for sent request
 	Ack bool
+	// Error
+	Error error
 	// Timestamp is time of packet creation.
 	Timestamp time.Time `json:"timestamp"`
-}
-
-func (p *Packet) Marshal() ([]byte, error) {
-	return json.Marshal(p)
 }

@@ -1,10 +1,6 @@
 package server
 
-import (
-	"io"
-
-	"github.com/itzmanish/go-loganalyzer/internal/transport"
-)
+import "github.com/itzmanish/go-loganalyzer/internal/codec"
 
 // Server
 type Server interface {
@@ -18,13 +14,9 @@ type Server interface {
 
 // Handler handles request from client
 type Handler interface {
-	Handle(req *transport.Packet, w io.Writer) error
+	Handle(*codec.Packet) (*codec.Packet, error)
 }
 
 func NewServer(opts ...Option) Server {
-	t := tcpServer{
-		close: make(chan bool, 1),
-	}
-	t.Init(opts...)
-	return &t
+	return NewTcpServer(opts...)
 }
