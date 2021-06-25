@@ -76,7 +76,7 @@ func (*tcpServer) String() string {
 }
 
 func (t *tcpServer) handleConnection(conn net.Conn) {
-	defer t.opts.Codec.Close()
+	defer conn.Close()
 	t.opts.Codec.Init(conn)
 	for {
 		select {

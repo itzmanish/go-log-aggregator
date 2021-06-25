@@ -1,6 +1,7 @@
 package client
 
 import (
+	"io/ioutil"
 	"log"
 	"net"
 	"testing"
@@ -11,40 +12,39 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func runMockServer(t *testing.T) net.Listener {
-	l, err := net.Listen("tcp", ":32111")
-	assert.Nil(t, err)
+func runTestServer(t *testing.T, addr chan string) error {
+	l, err := net.Listen("tcp", ":5544")
+	if !assert.Nil(t, err) {
+		return err
+	}
+	assert.NotNil(t, l)
+	addr <- l.Addr().String()
 	go func() {
+		conn, err := l.Accept()
+		assert.Nil(t, err)
+		defer conn.Close()
 		for {
-			c, err := l.Accept()
+			b, err := ioutil.ReadAll(conn)
 			assert.Nil(t, err)
-			defer c.Close()
-			for {
-				select {
-				case <-time.After(5 * time.Second):
-					return
-				default:
-					for {
-						time.Sleep(100 * time.Millisecond)
-						n, err := c.Write([]byte("Hi"))
-						assert.Nil(t, err)
-						assert.Greater(t, n, 0)
-					}
-				}
-			}
+			n, err := conn.Write(b)
+			assert.Nil(t, err)
+			assert.NotZero(t, n)
+			return
 		}
 	}()
-	return l
+	return nil
 }
 
 func TestTCPClient(t *testing.T) {
-	l := runMockServer(t)
-	defer l.Close()
 	var client Client
-
+	addr := make(chan string, 1)
+	err := runTestServer(t, addr)
+	if err != nil {
+		t.Fatal(err)
+	}
+	id := uuid.New()
 	t.Run("TestNewClient", func(t *testing.T) {
-		client, err := NewClient(WithAddress(l.Addr().String()))
-		assert.NotNil(t, client)
+		client, err = NewClient(WithAddress(<-addr))
 		assert.Nil(t, err)
 	})
 
@@ -55,7 +55,7 @@ func TestTCPClient(t *testing.T) {
 
 	t.Run("TestOptions", func(t *testing.T) {
 		opt := client.Options()
-		assert.Equal(t, int32(2), opt.MaxRetries)
+		assert.Equal(t, 2, opt.MaxRetries)
 	})
 
 	t.Run("TestString", func(t *testing.T) {
@@ -64,7 +64,7 @@ func TestTCPClient(t *testing.T) {
 
 	t.Run("TestSend", func(t *testing.T) {
 		data := &codec.Packet{
-			ID: uuid.New(),
+			ID: id,
 		}
 		err := client.Send(data)
 		assert.Nil(t, err)

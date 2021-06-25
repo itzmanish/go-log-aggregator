@@ -1,18 +1,27 @@
 package server
 
 import (
-	"bufio"
+	"encoding/json"
+	"errors"
 	"net"
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
+	"github.com/itzmanish/go-loganalyzer/internal/codec"
 	"github.com/stretchr/testify/assert"
 )
+
+type testHandler struct{}
+
+func (th *testHandler) Handle(req *codec.Packet) (*codec.Packet, error) {
+	return req, errors.New("test")
+}
 
 func TestTCPServer(t *testing.T) {
 	port := "34253"
 	server := NewServer()
-	err := server.Init(WithPort(port))
+	err := server.Init(WithPort(port), WithHandler(&testHandler{}))
 	assert.Nil(t, err)
 	assert.Equal(t, server.Options().Port, port)
 	go func() {
@@ -20,19 +29,21 @@ func TestTCPServer(t *testing.T) {
 		conn, err := net.Dial("tcp4", ":"+port)
 		assert.Nil(t, err)
 		conn.SetReadDeadline(time.Now().Add(5 * time.Second))
-		defer conn.Close()
 		go func() {
-			out, err := bufio.NewReader(conn).ReadString('\n')
+			out := codec.Packet{}
+			err := json.NewDecoder(conn).Decode(&out)
 			assert.Nil(t, err)
-			assert.Equal(t, "Hi", out)
+			assert.Equal(t, "log", out.Cmd)
+			conn.Close()
 		}()
-		n, err := conn.Write([]byte("Hi"))
+		err = json.NewEncoder(conn).Encode(&codec.Packet{ID: uuid.New(), Cmd: "log"})
 		assert.Nil(t, err)
-		assert.Greater(t, n, 0)
+
 		err = server.Stop()
 		assert.Nil(t, err)
 	}()
+	assert.Equal(t, "TCP server", server.String())
+
 	err = server.Start()
 	assert.Nil(t, err)
-	assert.Equal(t, "TCP server", server.String())
 }

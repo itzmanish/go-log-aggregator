@@ -31,53 +31,7 @@ var serverCmd = &cobra.Command{
 	Use:   "server",
 	Short: "Log analyzer server to collect logs from agent and process it.",
 	Run: func(cmd *cobra.Command, args []string) {
-		port, err := cmd.Flags().GetString("server.port")
-		if err != nil {
-			logger.Fatal(err)
-		}
-		storeName, err := cmd.Flags().GetString("server.store")
-		if err != nil {
-			logger.Fatal(err)
-		}
-		sProvider, ok := store.Stores[storeName]
-		if !ok {
-			logger.Fatal("Store Provider doesn't exits. please select a different store provider.")
-		}
-		sopts := []store.Option{}
-		if bn, err := cmd.Flags().GetString("server.bucket"); bn != "" && err == nil {
-			sopts = append(sopts, store.WithDirectory(bn))
-		}
-		if ep, err := cmd.Flags().GetString("server.endpoint"); ep != "" && err == nil {
-			sopts = append(sopts, store.WithS3Endpoint(ep))
-		}
-		if epm, err := cmd.Flags().GetBool("server.path_addressing_mode"); epm && err == nil {
-			sopts = append(sopts, store.WithPathStyleAddressing(epm))
-		}
-		if ak, err := cmd.Flags().GetString("server.aws_access_key"); ak != "" && err == nil {
-			sopts = append(sopts, store.WithAWSAccessKey(ak))
-		}
-		if sak, err := cmd.Flags().GetString("server.aws_secret_key"); sak != "" && err == nil {
-			sopts = append(sopts, store.WithAWSSecretAccessKey(sak))
-		}
-
-		store, err := sProvider(sopts...)
-		if err != nil {
-			logger.Fatal(err)
-		}
-		logger.Info("Selected storage backend is ", store.String())
-		hdl := handler.NewHandler(store)
-		s := server.NewServer(server.WithPort(port), server.WithHandler(hdl))
-		exit := make(chan os.Signal, 1)
-		signal.Notify(exit, os.Interrupt)
-		go func() {
-			<-exit
-			if err := s.Stop(); err != nil {
-				logger.Fatal(err)
-			}
-		}()
-		if err := s.Start(); err != nil {
-			logger.Error(err)
-		}
+		RunServer(cmd, args)
 	},
 }
 
@@ -102,4 +56,55 @@ Environment variable: 'AWS_ACCESS_KEY_ID'.`)
 	serverCmd.Flags().String("server.aws_secret_key", "", `AWS Secret key for s3.
 Optional (read from shared credentials file or environment variable if not set).
 Environment variable: "AWS_SECRET_ACCESS_KEY".`)
+}
+
+func RunServer(cmd *cobra.Command, args []string) {
+	port, err := cmd.Flags().GetString("server.port")
+	if err != nil {
+		logger.Fatal(err)
+	}
+	storeName, err := cmd.Flags().GetString("server.store")
+	if err != nil {
+		logger.Fatal(err)
+	}
+	sProvider, ok := store.Stores[storeName]
+	if !ok {
+		logger.Fatal("Store Provider doesn't exits. please select a different store provider.")
+	}
+	sopts := []store.Option{}
+	if bn, err := cmd.Flags().GetString("server.bucket"); bn != "" && err == nil {
+		sopts = append(sopts, store.WithDirectory(bn))
+	}
+	if ep, err := cmd.Flags().GetString("server.endpoint"); ep != "" && err == nil {
+		sopts = append(sopts, store.WithS3Endpoint(ep))
+	}
+	if epm, err := cmd.Flags().GetBool("server.path_addressing_mode"); epm && err == nil {
+		sopts = append(sopts, store.WithPathStyleAddressing(epm))
+	}
+	if ak, err := cmd.Flags().GetString("server.aws_access_key"); ak != "" && err == nil {
+		sopts = append(sopts, store.WithAWSAccessKey(ak))
+	}
+	if sak, err := cmd.Flags().GetString("server.aws_secret_key"); sak != "" && err == nil {
+		sopts = append(sopts, store.WithAWSSecretAccessKey(sak))
+	}
+
+	store, err := sProvider(sopts...)
+	if err != nil {
+		logger.Fatal(err)
+	}
+	logger.Info("Selected storage backend is ", store.String())
+	hdl := handler.NewHandler(store)
+	s := server.NewServer(server.WithPort(port), server.WithHandler(hdl))
+	exit := make(chan os.Signal, 1)
+	signal.Notify(exit, os.Interrupt)
+	go func() {
+		<-exit
+		if err := s.Stop(); err != nil {
+			logger.Fatal(err)
+		}
+	}()
+	if err := s.Start(); err != nil {
+		logger.Error(err)
+	}
+
 }

@@ -12,20 +12,20 @@ type Queue interface {
 	Pop(key interface{})
 	Push(value interface{})
 	Get(key interface{}) (interface{}, bool)
-	ForEach(f func(key interface{}, value interface{}) bool)
 	Length() int
 	String() string
 }
 
 type memQueue struct {
-	queue  sync.Map
-	length int
-	client client.Client
+	queue    sync.Map
+	length   int
+	interval time.Duration
+	client   client.Client
 }
 
 func (mq *memQueue) handle() int {
 	for {
-		<-time.After(10 * time.Second)
+		<-time.After(mq.interval)
 		logger.Info("Queue [status]Total: ", mq.length)
 		go func() {
 			mq.queue.Range(func(key, value interface{}) bool {
@@ -58,17 +58,11 @@ func (mq *memQueue) Get(k interface{}) (interface{}, bool) {
 	return mq.queue.Load(k)
 }
 
-func (mq *memQueue) ForEach(f func(key interface{}, value interface{}) bool) {
-	mq.queue.Range(func(key, value interface{}) bool {
-		return f(key, value)
-	})
-}
-
 func (mq *memQueue) String() string {
 	return "Memory queue"
 }
 
-func NewQueue(c client.Client) Queue {
+func NewQueue(c client.Client, interval time.Duration) Queue {
 	q := &memQueue{
 		client: c,
 	}

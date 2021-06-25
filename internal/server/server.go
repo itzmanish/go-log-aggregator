@@ -14,7 +14,7 @@ type Server interface {
 
 // Handler handles request from client
 type Handler interface {
-	Handle(*codec.Packet) (*codec.Packet, error)
+	Handle(in *codec.Packet) (*codec.Packet, error)
 }
 
 func NewServer(opts ...Option) Server {

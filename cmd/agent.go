@@ -53,7 +53,7 @@ func RunAgent(cmd *cobra.Command, args []string) {
 	if err != nil {
 		logger.Fatal(err)
 	}
-	q := queue.NewQueue(cli)
+	q := queue.NewQueue(cli, 10*time.Second)
 	exit := make(chan os.Signal, 1)
 	signal.Notify(exit, os.Interrupt)
 	go SendLogs(w, cli, q)
