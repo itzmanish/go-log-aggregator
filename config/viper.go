@@ -69,6 +69,9 @@ func (v *viperConfig) String() string {
 }
 
 func (v *viperConfig) bindFlags() {
+	if v.opts.Cmd == nil {
+		return
+	}
 	v.opts.Cmd.Flags().VisitAll(func(f *pflag.Flag) {
 		// Environment variables can't have dashes in them, so bind them to their equivalent
 		// keys with underscores, e.g. --favorite-color to STING_FAVORITE_COLOR

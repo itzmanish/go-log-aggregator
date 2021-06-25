@@ -13,7 +13,7 @@ import (
 )
 
 func runTestServer(t *testing.T, addr chan string) error {
-	l, err := net.Listen("tcp", ":5544")
+	l, err := net.Listen("tcp", ":5541")
 	if !assert.Nil(t, err) {
 		return err
 	}
@@ -24,9 +24,8 @@ func runTestServer(t *testing.T, addr chan string) error {
 		assert.Nil(t, err)
 		defer conn.Close()
 		for {
-			b, err := ioutil.ReadAll(conn)
+			_, err := ioutil.ReadAll(conn)
 			assert.Nil(t, err)
-			t.Log(string(b))
 			return
 		}
 	}()

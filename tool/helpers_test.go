@@ -10,7 +10,7 @@ import (
 func TestFilterFileWatcher(t *testing.T) {
 	watchers := config.Watchers{
 		config.Watcher{
-			Watch: "test/sfome.txt",
+			Watch: "sample/log.txt",
 			Tags: []map[string]interface{}{
 				{
 					"key":   "Type",
@@ -19,7 +19,7 @@ func TestFilterFileWatcher(t *testing.T) {
 			},
 		},
 		config.Watcher{
-			Watch: "test/other.txt",
+			Watch: "sample/other.txt",
 			Tags: []map[string]interface{}{
 				{
 					"key":   "Type",
@@ -28,7 +28,7 @@ func TestFilterFileWatcher(t *testing.T) {
 			},
 		},
 		config.Watcher{
-			Watch: "test/fs2.txt",
+			Watch: "sample/log2.txt",
 			Tags: []map[string]interface{}{
 				{
 					"key":   "Type",
@@ -39,7 +39,7 @@ func TestFilterFileWatcher(t *testing.T) {
 	}
 	expectedWatcher := config.Watchers{
 		config.Watcher{
-			Watch: "test/sfome.txt",
+			Watch: "sample/log.txt",
 			Tags: []map[string]interface{}{
 				{
 					"key":   "Type",
@@ -48,7 +48,7 @@ func TestFilterFileWatcher(t *testing.T) {
 			},
 		},
 		config.Watcher{
-			Watch: "test/fs2.txt",
+			Watch: "sample/log2.txt",
 			Tags: []map[string]interface{}{
 				{
 					"key":   "Type",
@@ -64,10 +64,10 @@ func TestFilterFileWatcher(t *testing.T) {
 func TestGetSeekInfo(t *testing.T) {
 	t.Run("Success with correct path", func(t *testing.T) {
 		n := GetSeekInfo("../sample/log.txt")
-		assert.Equal(t, n, int64(31))
+		assert.NotZero(t, n)
 	})
 	t.Run("Fail with wrong path", func(t *testing.T) {
 		n := GetSeekInfo("sample/log.txt")
-		assert.Equal(t, n, int64(0))
+		assert.Zero(t, n)
 	})
 }
