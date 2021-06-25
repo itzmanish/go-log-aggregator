@@ -7,7 +7,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func skipCI(t *testing.T) {
+	if os.Getenv("CI") != "" {
+		t.Skip("Skipping s3 store test in CI environment")
+	}
+}
+
 func TestS3Store(t *testing.T) {
+	skipCI(t)
 	s3, err := NewS3Store(WithDirectory("s3test"), WithPathStyleAddressing(true), WithS3Endpoint(os.Getenv("S3_ENDPOINT")),
 		WithAWSAccessKey(os.Getenv("AWS_ACCESS_KEY")), WithAWSSecretAccessKey(os.Getenv("AWS_SECRET_KEY")),
 	)
