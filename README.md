@@ -10,3 +10,14 @@
 - [x] Server
 - [x] Retry manager
 - [x] Store queue
+
+## Architecture
+![LogAnalyzer](https://user-images.githubusercontent.com/12438068/123430818-3e56c380-d5e6-11eb-9020-83b00984deea.png)
+![LogAnalyzer-agent-v0](https://user-images.githubusercontent.com/12438068/123430891-4f073980-d5e6-11eb-8b7c-ead15c3adf8f.png)
+
+## ToDos
+
+- [ ] HTTP/GRPC endpoint for getting logs from other service
+- [ ] Filter wrapper for filtering logs
+- [ ] HTTP API for querying logs from server
+- [ ] Filter and Search on server side
