@@ -42,7 +42,13 @@
   ],
   "server": {
     "host": "127.0.0.1",
-    "port": 33555
+    "port": 33555,
+    "store": "s3",
+    "bucket": "sample",
+    "endpoint": "http://127.0.0.1:9000",
+    "aws_access_key": "minioadmin",
+    "aws_secret_key": "minioadmin",
+    "path_addressing_mode": true
   },
   "agent": {
     "max_retries": 3,
