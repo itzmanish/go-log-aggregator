@@ -2,7 +2,6 @@ package server
 
 import (
 	"encoding/json"
-	"errors"
 	"net"
 	"testing"
 	"time"
@@ -15,7 +14,7 @@ import (
 type testHandler struct{}
 
 func (th *testHandler) Handle(req *codec.Packet) (*codec.Packet, error) {
-	return req, errors.New("test")
+	return req, nil
 }
 
 func TestTCPServer(t *testing.T) {
@@ -43,7 +42,6 @@ func TestTCPServer(t *testing.T) {
 		server.Stop()
 	}()
 	assert.Equal(t, "TCP server", server.String())
-
 	err = server.Start()
 	assert.Nil(t, err)
 }
