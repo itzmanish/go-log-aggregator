@@ -32,4 +32,4 @@ Every contributions to this project is ❤️ welcome.
 
 ## License
 
-This project is licence under Apache Licence 2.0 
+This project is licence under [Apache Licence 2.0](https://github.com/itzmanish/go-loganalyzer/blob/master/LICENSE)
