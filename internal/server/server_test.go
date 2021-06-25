@@ -39,8 +39,7 @@ func TestTCPServer(t *testing.T) {
 		err = json.NewEncoder(conn).Encode(&codec.Packet{ID: uuid.New(), Cmd: "log"})
 		assert.Nil(t, err)
 
-		err = server.Stop()
-		assert.Nil(t, err)
+		server.Stop()
 	}()
 	assert.Equal(t, "TCP server", server.String())
 
