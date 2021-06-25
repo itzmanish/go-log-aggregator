@@ -17,8 +17,14 @@ type Watcher struct {
 type Watchers []Watcher
 
 type ServerConfig struct {
-	Host string `mapstructure:"host"`
-	Port string `mapstructure:"port"`
+	Host               string `mapstructure:"host"`
+	Port               string `mapstructure:"port"`
+	Store              string `mapstructure:"store"`
+	Bucket             string `mapstructure:"bucket"`
+	Endpoint           string `mapstructure:"endpoint"`
+	AwsAccessKey       string `mapstructure:"aws_access_key"`
+	AwsSecretKey       string `mapstructure:"aws_secret_key"`
+	PathAddressingMode string `mapstructure:"path_addressing_mode"`
 }
 
 type AgentConfig struct {

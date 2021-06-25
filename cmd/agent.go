@@ -3,6 +3,7 @@ package cmd
 import (
 	"os"
 	"os/signal"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -53,6 +54,19 @@ func RunAgent(cmd *cobra.Command, args []string) {
 		logger.Fatal(err)
 	}
 	q := queue.NewQueue(cli)
+	exit := make(chan os.Signal, 1)
+	signal.Notify(exit, os.Interrupt)
+	go SendLogs(w, cli, q)
+	<-exit
+	err = cli.Close()
+	if err != nil {
+		logger.Error(err)
+	}
+	logger.Info("Shutting down agent...")
+}
+
+func SendLogs(w watcher.Watcher, client client.Client, q queue.Queue) {
+	sent := sync.Map{}
 	go func() {
 		for v := range w.Result() {
 			req := &codec.Packet{ID: uuid.New(), Cmd: "log", Body: &codec.LogBody{
@@ -61,25 +75,25 @@ func RunAgent(cmd *cobra.Command, args []string) {
 				Tags:      v.Tags,
 				Timestamp: v.Timestamp,
 			}, Timestamp: time.Now()}
-			err = cli.Send(req)
+			err := client.Send(req)
 			if err != nil {
 				logger.Error(err)
 				q.Push(req)
+			} else {
+				sent.Store(req.ID, req)
 			}
 		}
 	}()
-	exit := make(chan os.Signal, 1)
-	signal.Notify(exit, os.Interrupt)
-	go func() {
-		for v := range cli.Out() {
-			logger.Info(*v)
+	for v := range client.Out() {
+		_, ok := sent.Load(v.ID)
+		if ok {
+			if v.Ack {
+				sent.Delete(v.ID)
+			}
 		}
-	}()
-
-	<-exit
-	err = cli.Close()
-	if err != nil {
-		logger.Error(err)
+		if v.Error != nil {
+			logger.Error(v.Error)
+		}
 	}
-	logger.Info("Shutting down agent...")
+
 }

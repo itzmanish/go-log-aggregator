@@ -8,7 +8,7 @@ type Client interface {
 	Out() chan *codec.Packet
 	Send(data interface{}) error
 	Recv(out interface{}) error
-	Read() error
+	Read()
 	Close() error
 	String() string
 }

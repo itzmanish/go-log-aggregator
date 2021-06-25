@@ -10,7 +10,6 @@ import (
 
 	"github.com/itzmanish/go-loganalyzer/internal/codec"
 	jc "github.com/itzmanish/go-loganalyzer/internal/codec/json"
-	"github.com/itzmanish/go-loganalyzer/internal/logger"
 )
 
 type tcpClient struct {
@@ -55,20 +54,17 @@ func (t *tcpClient) Out() chan *codec.Packet {
 }
 
 func (t *tcpClient) send(data interface{}) error {
-	if t.opts.Timeout != 0 {
-		t.conn.SetWriteDeadline(time.Now().Add(5 * time.Second))
-	}
 	return t.opts.Codec.Write(data)
 }
 
 func (t *tcpClient) Send(data interface{}) error {
 	tsend := t.send
-	ctx, cancel := context.WithTimeout(context.Background(), t.opts.Timeout)
-	defer cancel()
 	ch := make(chan error, t.opts.MaxRetries+1)
 	var terr error
 
 	for i := 0; i < t.opts.MaxRetries; i++ {
+		ctx, cancel := context.WithTimeout(context.Background(), t.opts.Timeout)
+		defer cancel()
 		go func() {
 			ch <- tsend(data)
 		}()
@@ -104,24 +100,17 @@ func (t *tcpClient) Recv(out interface{}) error {
 	// return json.NewDecoder(t.conn).Decode(&out)
 }
 
-func (t *tcpClient) Read() error {
+func (t *tcpClient) Read() {
 	for {
 		var msg codec.Packet
 		err := t.opts.Codec.Read(&msg)
 		if err == io.EOF {
-			return nil
+			t.Connect()
+			continue
 		}
-
-		if err != nil {
-			if neterr, ok := err.(net.Error); ok && neterr.Timeout() {
-				logger.Error(neterr)
-				// return fmt.Errorf("TCP timeout : %s", err.Error())
-			} else {
-				logger.Errorf("Received error decoding message: %s", err.Error())
-			}
+		if err == nil {
+			t.out <- &msg
 		}
-
-		t.out <- &msg
 	}
 }
 

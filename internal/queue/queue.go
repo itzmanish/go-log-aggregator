@@ -26,9 +26,9 @@ type memQueue struct {
 func (mq *memQueue) handle() int {
 	for {
 		<-time.After(10 * time.Second)
+		logger.Info("Queue [status]Total: ", mq.length)
 		go func() {
 			mq.queue.Range(func(key, value interface{}) bool {
-				logger.Info("From queue")
 				logger.Info(key, value)
 				err := mq.client.Send(value)
 				if err == nil {
