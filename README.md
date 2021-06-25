@@ -21,3 +21,15 @@
 - [ ] Filter wrapper for filtering logs
 - [ ] HTTP API for querying logs from server
 - [ ] Filter and Search on server side
+
+## Contributions
+
+> Note
+> This is just a practice exercise and not production ready.
+
+If anyone wants to make this project real or have some good features/roadmap in mind. Feel free to raise a issue.
+Every contributions to this project is ❤️ welcome.
+
+## License
+
+This project is licence under Apache Licence 2.0 
