@@ -32,13 +32,14 @@ func TestTCPServer(t *testing.T) {
 		go func() {
 			out := codec.Packet{}
 			err := json.NewDecoder(conn).Decode(&out)
-			assert.Nil(t, err)
+			if err != nil {
+				t.Error(err)
+			}
 			assert.Equal(t, "log", out.Cmd)
 			conn.Close()
 		}()
 		err = json.NewEncoder(conn).Encode(&codec.Packet{ID: uuid.New(), Cmd: "log"})
 		assert.Nil(t, err)
-		<-time.After(100 * time.Millisecond)
 		server.Stop()
 	}()
 	assert.Equal(t, "TCP server", server.String())
