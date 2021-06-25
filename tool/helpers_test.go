@@ -60,3 +60,14 @@ func TestFilterFileWatcher(t *testing.T) {
 	actualWatchers := FilterFileWatcher(watchers)
 	assert.Equal(t, expectedWatcher, actualWatchers)
 }
+
+func TestGetSeekInfo(t *testing.T) {
+	t.Run("Success with correct path", func(t *testing.T) {
+		n := GetSeekInfo("../sample/log.txt")
+		assert.Equal(t, n, int64(31))
+	})
+	t.Run("Fail with wrong path", func(t *testing.T) {
+		n := GetSeekInfo("sample/log.txt")
+		assert.Equal(t, n, int64(0))
+	})
+}
