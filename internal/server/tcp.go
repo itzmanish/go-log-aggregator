@@ -79,33 +79,31 @@ func (t *tcpServer) handleConnection(conn net.Conn) {
 	defer conn.Close()
 	t.opts.Codec.Init(conn)
 	for {
-		select {
-		case <-t.close:
+		if t.Closed() {
 			return
-		default:
-			var msg codec.Packet
-			err := t.opts.Codec.Read(&msg)
-			if err != nil {
-				if err != io.EOF {
-					logger.Error("read error", err)
-				}
-				return
+		}
+		var msg codec.Packet
+		err := t.opts.Codec.Read(&msg)
+		if err != nil {
+			if err != io.EOF {
+				logger.Error("read error", err)
 			}
-			if msg.ID != uuid.Nil && t.opts.Handler != nil {
-				res, err := t.opts.Handler.Handle(&msg)
-				if err != nil {
-					err = t.opts.Codec.Write(&codec.Packet{
-						Error: err,
-					})
-					logger.Error(err)
-					return
+			return
+		}
+		if msg.ID != uuid.Nil && t.opts.Handler != nil {
+			res, err := t.opts.Handler.Handle(&msg)
+			if err != nil {
+				err = t.opts.Codec.Write(&codec.Packet{
+					Error: err,
+				})
+				logger.Error(err)
+				return
 
-				}
-				err = t.opts.Codec.Write(res)
-				if err != nil {
-					logger.Error(err)
-					return
-				}
+			}
+			err = t.opts.Codec.Write(res)
+			if err != nil {
+				logger.Error(err)
+				return
 			}
 		}
 	}
