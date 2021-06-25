@@ -96,7 +96,9 @@ func (t *tcpServer) handleConnection(conn net.Conn) {
 				err = t.opts.Codec.Write(&codec.Packet{
 					Error: err,
 				})
-				logger.Error(err)
+				if err != nil {
+					logger.Error(err)
+				}
 				return
 
 			}
