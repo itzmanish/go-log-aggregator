@@ -24,9 +24,12 @@ var cfgFile string
 
 // appCmd represents the base command when called without any subcommands
 var appCmd = &cobra.Command{
-	Use:     "loganalyzer",
-	Short:   "loganalyzer is Log analyzer agent which runs in host system and sends log from logfiles",
-	Version: "1.0.0",
+	Use:   "loganalyzer",
+	Short: "loganalyzer is a log analyzer tool which provides a server and agent.",
+	Long: `loganalyzer is a log analyzer tool which provides a server and agent.
+Server command is used to start a server. Whereas agent command is used to start 
+an agent so that logs can be sent from host machine to server and stored in File system or S3.`,
+	Version: "0.1.0",
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
