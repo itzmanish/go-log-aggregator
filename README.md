@@ -1,6 +1,6 @@
 ## Log Analyzer
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/itzmanish/go-loganalyzer.svg)](https://pkg.go.dev/github.com/itzmanish/go-loganalyzer) [![codecov](https://codecov.io/gh/itzmanish/go-loganalyzer/branch/master/graph/badge.svg?token=7434KW1MLY)](https://codecov.io/gh/itzmanish/go-loganalyzer) [![Go Report Card](https://goreportcard.com/badge/github.com/itzmanish/go-loganalyzer)](https://goreportcard.com/report/github.com/itzmanish/go-loganalyzer)
+[![Go Reference](https://pkg.go.dev/badge/github.com/itzmanish/go-loganalyzer.svg)](https://pkg.go.dev/github.com/itzmanish/go-loganalyzer) [![Go](https://github.com/itzmanish/go-loganalyzer/actions/workflows/go.yml/badge.svg)](https://github.com/itzmanish/go-loganalyzer/actions/workflows/go.yml) [![codecov](https://codecov.io/gh/itzmanish/go-loganalyzer/branch/master/graph/badge.svg?token=7434KW1MLY)](https://codecov.io/gh/itzmanish/go-loganalyzer) [![Go Report Card](https://goreportcard.com/badge/github.com/itzmanish/go-loganalyzer)](https://goreportcard.com/report/github.com/itzmanish/go-loganalyzer)
 
 ## Features
 
