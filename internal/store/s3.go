@@ -7,6 +7,7 @@ type s3store struct {
 	s3   s3.Client
 }
 
+// NewS3Store creates a new s3 store and return store and a error if any
 func NewS3Store(opts ...Option) (Store, error) {
 	ss := &s3store{}
 	for _, o := range opts {

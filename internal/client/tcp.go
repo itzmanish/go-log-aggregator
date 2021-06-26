@@ -90,7 +90,7 @@ func (t *tcpClient) Send(data interface{}) error {
 
 }
 
-// Recv is for recieving however it is not working
+// Recv is for receiving however it is not working
 // Do not use this for now. Will fix it later.
 func (t *tcpClient) Recv(out interface{}) error {
 	if t.opts.Timeout != 0 {

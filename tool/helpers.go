@@ -7,6 +7,7 @@ import (
 	"github.com/itzmanish/go-loganalyzer/internal/logger"
 )
 
+// FilterFileWatcher filters for file watcher and returns only watcher which are type of filesystem
 func FilterFileWatcher(watchers config.Watchers) config.Watchers {
 	filewatchers := config.Watchers{}
 	for _, watcher := range watchers {
@@ -19,6 +20,7 @@ func FilterFileWatcher(watchers config.Watchers) config.Watchers {
 	return filewatchers
 }
 
+// GetSeekInfo gets the current file size
 func GetSeekInfo(name string) int64 {
 	info, err := os.Stat(name)
 	if err != nil {
