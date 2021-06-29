@@ -13,6 +13,7 @@
 
 ## ToDos
 
+- [ ] Exponential backoff/retry
 - [ ] HTTP/GRPC endpoint for getting logs from other service
 - [ ] Filter wrapper for filtering logs
 - [ ] HTTP API for querying logs from server

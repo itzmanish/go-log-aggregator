@@ -65,6 +65,7 @@ func (t *tcpClient) Send(data interface{}) error {
 	for i := 0; i < t.opts.MaxRetries; i++ {
 		ctx, cancel := context.WithTimeout(context.Background(), t.opts.Timeout)
 		defer cancel()
+
 		go func() {
 			ch <- tsend(data)
 		}()
