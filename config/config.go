@@ -1,5 +1,9 @@
 package config
 
+import (
+	"time"
+)
+
 type Config interface {
 	Init(opts ...Option) error
 	Get(key string) interface{}
@@ -28,9 +32,10 @@ type ServerConfig struct {
 }
 
 type AgentConfig struct {
-	Watchers `mapstructure:"watchers"`
-	Server   ServerConfig      `mapstructure:"server"`
-	Retry    map[string]string `mapstructure:"retry"`
+	Watchers     `mapstructure:"watchers"`
+	MaxRetries   int           `mapstructure:"max_retries"`
+	MaxQueueSize int           `mapstructure:"max_queue_size"`
+	Timeout      time.Duration `mapstructure:"timeout"`
 }
 
 var defaultConfig Config

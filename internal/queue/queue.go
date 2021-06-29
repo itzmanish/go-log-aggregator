@@ -32,7 +32,7 @@ func (mq *memQueue) handle() int {
 				logger.Info(key, value)
 				err := mq.client.Send(value)
 				if err == nil {
-					mq.queue.Delete(key)
+					mq.Pop(key)
 				}
 				return true
 			})
@@ -64,7 +64,8 @@ func (mq *memQueue) String() string {
 
 func NewQueue(c client.Client, interval time.Duration) Queue {
 	q := &memQueue{
-		client: c,
+		client:   c,
+		interval: interval,
 	}
 	go q.handle()
 	return q

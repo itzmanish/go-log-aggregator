@@ -31,12 +31,12 @@ func init() {
 }
 
 func RunAgent(cmd *cobra.Command, args []string) {
-	watchers := config.Watchers{}
-	err := config.Scan("watchers", &watchers)
+	agentConfig := config.AgentConfig{}
+	err := config.Scan("agent", &agentConfig)
 	if err != nil {
 		logger.Error(err)
 	}
-	files := tool.FilterFileWatcher(watchers)
+	files := tool.FilterFileWatcher(agentConfig.Watchers)
 	w := watcher.NewFileWatcher(files)
 	w.Watch()
 	defer w.Close()
@@ -48,12 +48,13 @@ func RunAgent(cmd *cobra.Command, args []string) {
 	}
 	cli, err := client.NewClient(
 		client.WithAddress(serverConfig.Host+":"+serverConfig.Port),
-		client.WithTimeout(5*time.Second),
+		client.WithTimeout(agentConfig.Timeout),
+		client.WithMaxRetries(agentConfig.MaxRetries),
 	)
 	if err != nil {
 		logger.Fatal(err)
 	}
-	q := queue.NewQueue(cli, 10*time.Second)
+	q := queue.NewQueue(cli, agentConfig.Timeout+5*time.Second)
 	exit := make(chan os.Signal, 1)
 	signal.Notify(exit, os.Interrupt)
 	go SendLogs(w, cli, q)
@@ -78,7 +79,9 @@ func SendLogs(w watcher.Watcher, client client.Client, q queue.Queue) {
 			err := client.Send(req)
 			if err != nil {
 				logger.Error(err)
-				q.Push(req)
+				if q.Length() < 1000 {
+					q.Push(req)
+				}
 			} else {
 				sent.Store(req.ID, req)
 			}
@@ -95,5 +98,4 @@ func SendLogs(w watcher.Watcher, client client.Client, q queue.Queue) {
 			logger.Error(v.Error)
 		}
 	}
-
 }
