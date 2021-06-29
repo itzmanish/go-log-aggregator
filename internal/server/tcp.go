@@ -91,23 +91,34 @@ func (t *tcpServer) handleConnection(conn net.Conn) {
 			return
 		}
 		if msg.ID != uuid.Nil && t.opts.Handler != nil {
-			res, err := t.opts.Handler.Handle(&msg)
-			if err != nil {
-				err = t.opts.Codec.Write(&codec.Packet{
-					Error: err,
-				})
+			req := &msg
+			var er error
+			// Execute handler from last
+			for i := len(t.opts.Handler) - 1; i >= 0; i-- {
+				req, er = t.opts.Handler[i].Handle(req)
+				if er != nil {
+					return
+				}
+			}
+			if er != nil {
+				t.sendError(err)
+			} else {
+				err = t.opts.Codec.Write(req)
 				if err != nil {
 					logger.Error(err)
+					return
 				}
-				return
-
-			}
-			err = t.opts.Codec.Write(res)
-			if err != nil {
-				logger.Error(err)
-				return
 			}
 		}
+	}
+}
+
+func (t *tcpServer) sendError(err error) {
+	err = t.opts.Codec.Write(&codec.Packet{
+		Error: err,
+	})
+	if err != nil {
+		logger.Error(err)
 	}
 }
 

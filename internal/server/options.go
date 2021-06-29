@@ -5,7 +5,7 @@ import "github.com/itzmanish/go-loganalyzer/internal/codec"
 type Options struct {
 	Port    string
 	Host    string
-	Handler Handler
+	Handler []Handler
 	Codec   codec.Codec
 }
 
@@ -25,7 +25,7 @@ func WithPort(port string) Option {
 
 func WithHandler(handler Handler) Option {
 	return func(o *Options) {
-		o.Handler = handler
+		o.Handler = append(o.Handler, handler)
 	}
 }
 
