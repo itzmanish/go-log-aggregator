@@ -82,10 +82,11 @@ func (t *tcpClient) Send(data interface{}) error {
 		if err == nil {
 			return nil
 		}
-		if errors.Is(err, syscall.EPIPE) {
+		if e, ok := err.(*net.OpError); ok && e.Err.Error() == "use of closed network connection" || errors.Is(err, syscall.EPIPE) {
 			t.conn.Close()
 			err = t.Connect()
 		}
+
 		terr = err
 	}
 	return terr

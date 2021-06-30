@@ -20,6 +20,7 @@ import (
 	"os/signal"
 
 	"github.com/itzmanish/go-log-aggregator/handler"
+	"github.com/itzmanish/go-log-aggregator/internal/codec/gob"
 	"github.com/itzmanish/go-log-aggregator/internal/logger"
 	"github.com/itzmanish/go-log-aggregator/internal/server"
 	"github.com/itzmanish/go-log-aggregator/internal/store"
@@ -94,7 +95,7 @@ func RunServer(cmd *cobra.Command, args []string) {
 	}
 	logger.Info("Selected storage backend is ", store.String())
 	hdl := handler.NewHandler(store)
-	s := server.NewServer(server.WithPort(port), server.WithHandler(hdl))
+	s := server.NewServer(server.WithPort(port), server.WithHandler(hdl), server.WithCodec(gob.NewGobCodec()))
 	exit := make(chan os.Signal, 1)
 	signal.Notify(exit, os.Interrupt)
 	go func() {

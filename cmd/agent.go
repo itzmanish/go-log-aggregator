@@ -10,6 +10,7 @@ import (
 	"github.com/itzmanish/go-log-aggregator/config"
 	"github.com/itzmanish/go-log-aggregator/internal/client"
 	"github.com/itzmanish/go-log-aggregator/internal/codec"
+	"github.com/itzmanish/go-log-aggregator/internal/codec/gob"
 	"github.com/itzmanish/go-log-aggregator/internal/logger"
 	"github.com/itzmanish/go-log-aggregator/internal/queue"
 	"github.com/itzmanish/go-log-aggregator/internal/watcher"
@@ -47,6 +48,7 @@ func RunAgent(cmd *cobra.Command, args []string) {
 		logger.Fatal(err)
 	}
 	cli, err := client.NewClient(
+		client.WithCodec(gob.NewGobCodec()),
 		client.WithAddress(serverConfig.Host+":"+serverConfig.Port),
 		client.WithTimeout(agentConfig.Timeout),
 		client.WithMaxRetries(agentConfig.MaxRetries),
