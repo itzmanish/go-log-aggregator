@@ -13,7 +13,7 @@
 
 ## ToDos
 
-- [ ] Exponential backoff/retry
+- [ ] Exponential backoff (I am not sure if we need it here.)
 - [ ] HTTP API for querying logs from server
 - [ ] Filter and Search on server side
 - [ ] Filter wrapper for filtering logs

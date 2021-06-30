@@ -7,5 +7,5 @@ do
    echo "log entry $count"
    echo "log entry $count" >> sample/log.txt
    ((count+=1))
-   sleep 1;
+   sleep 0.1;
 done

@@ -10,23 +10,45 @@ import (
 )
 
 type srvHandler struct {
-	store store.Store
+	store  store.Store
+	buffer chan *codec.Packet
 }
 
 func NewHandler(s store.Store) server.Handler {
-	return &srvHandler{
-		store: s,
+	h := &srvHandler{
+		store:  s,
+		buffer: make(chan *codec.Packet, 10),
+	}
+	go h.Flush()
+	return h
+}
+
+func (h *srvHandler) Flush() {
+	for {
+		if len(h.buffer) == cap(h.buffer) {
+			logger.Info("Buffer full. Flushing now.")
+			h.flush()
+		}
+	}
+}
+
+func (h *srvHandler) flush() {
+	data := []*codec.Packet{}
+	length := len(h.buffer)
+	for i := 0; i < length; i++ {
+		data = append(data, <-h.buffer)
+	}
+	err := h.store.Set(time.Now().String(), data)
+	if err != nil {
+		logger.Error(err)
 	}
 }
 
 func (h *srvHandler) Handle(req *codec.Packet) (*codec.Packet, error) {
 	switch req.Cmd {
 	case "log":
-		logger.Info("Got your request: ", req.ID)
-		err := h.store.Set(req.ID.String(), req.Body)
-		if err != nil {
-			return nil, err
-		}
+		logger.Info("Got your request: ", req.Body)
+		h.buffer <- req
 		ack := &codec.Packet{
 			ID:        req.ID,
 			Ack:       true,
