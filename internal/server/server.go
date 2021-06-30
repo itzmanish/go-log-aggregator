@@ -1,6 +1,6 @@
 package server
 
-import "github.com/itzmanish/go-loganalyzer/internal/codec"
+import "github.com/itzmanish/go-log-aggregator/internal/codec"
 
 // Server
 type Server interface {

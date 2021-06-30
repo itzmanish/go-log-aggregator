@@ -14,11 +14,11 @@ func TestAppCmd(t *testing.T) {
 	cmd := appCmd
 	cmd.SetOut(&b)
 	t.Run("TestWithoutArgs", func(t *testing.T) {
-		cmd.SetArgs([]string{"--config", "../.loganalyzer.json"})
+		cmd.SetArgs([]string{"--config", "../.log-aggregator.json"})
 		cmd.Execute()
 	})
 	t.Run("TestServerCmd", func(t *testing.T) {
-		cmd.SetArgs([]string{"--config", "../.loganalyzer.json", "server"})
+		cmd.SetArgs([]string{"--config", "../.log-aggregator.json", "server"})
 		go func() {
 			cmd.Execute()
 		}()
@@ -26,7 +26,7 @@ func TestAppCmd(t *testing.T) {
 	})
 
 	t.Run("TestAgentCmd", func(t *testing.T) {
-		cmd.SetArgs([]string{"--config", "../.loganalyzer.json", "agent"})
+		cmd.SetArgs([]string{"--config", "../.log-aggregator.json", "agent"})
 		go func() {
 			cmd.Execute()
 		}()

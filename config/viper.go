@@ -50,7 +50,7 @@ func (v *viperConfig) Load() error {
 
 		// Search config in config directory with name ".logent" (without extension).
 		v.viper.AddConfigPath(cfgDir)
-		v.viper.SetConfigName(".loganalyzer")
+		v.viper.SetConfigName(".log-aggregator")
 	}
 
 	v.viper.AutomaticEnv() // read in environment variables that match

@@ -1,4 +1,4 @@
 test:
 	CI=true go test -v ./...
 build:
-	go build -o go-loganalyzer .
+	go build -o go-log-aggregator .

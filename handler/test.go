@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"github.com/itzmanish/go-loganalyzer/internal/codec"
-	"github.com/itzmanish/go-loganalyzer/internal/logger"
+	"github.com/itzmanish/go-log-aggregator/internal/codec"
+	"github.com/itzmanish/go-log-aggregator/internal/logger"
 )
 
 type testHandler struct {

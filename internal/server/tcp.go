@@ -7,9 +7,9 @@ import (
 	"sync/atomic"
 
 	"github.com/google/uuid"
-	"github.com/itzmanish/go-loganalyzer/internal/codec"
-	"github.com/itzmanish/go-loganalyzer/internal/codec/json"
-	"github.com/itzmanish/go-loganalyzer/internal/logger"
+	"github.com/itzmanish/go-log-aggregator/internal/codec"
+	"github.com/itzmanish/go-log-aggregator/internal/codec/json"
+	"github.com/itzmanish/go-log-aggregator/internal/logger"
 )
 
 type tcpServer struct {

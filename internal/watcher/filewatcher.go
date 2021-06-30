@@ -4,9 +4,9 @@ import (
 	"time"
 
 	"github.com/hpcloud/tail"
-	"github.com/itzmanish/go-loganalyzer/config"
-	"github.com/itzmanish/go-loganalyzer/internal/logger"
-	"github.com/itzmanish/go-loganalyzer/tool"
+	"github.com/itzmanish/go-log-aggregator/config"
+	"github.com/itzmanish/go-log-aggregator/internal/logger"
+	"github.com/itzmanish/go-log-aggregator/tool"
 )
 
 type Result struct {

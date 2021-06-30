@@ -19,17 +19,17 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/itzmanish/go-loganalyzer/handler"
-	"github.com/itzmanish/go-loganalyzer/internal/logger"
-	"github.com/itzmanish/go-loganalyzer/internal/server"
-	"github.com/itzmanish/go-loganalyzer/internal/store"
+	"github.com/itzmanish/go-log-aggregator/handler"
+	"github.com/itzmanish/go-log-aggregator/internal/logger"
+	"github.com/itzmanish/go-log-aggregator/internal/server"
+	"github.com/itzmanish/go-log-aggregator/internal/store"
 	"github.com/spf13/cobra"
 )
 
 // serverCmd represents the server command
 var serverCmd = &cobra.Command{
 	Use:   "server",
-	Short: "Log analyzer server to collect logs from agent and process it.",
+	Short: "Log aggregator server to collect logs from agent and process it.",
 	Run: func(cmd *cobra.Command, args []string) {
 		RunServer(cmd, args)
 	},
@@ -38,7 +38,7 @@ var serverCmd = &cobra.Command{
 func init() {
 	appCmd.AddCommand(serverCmd)
 
-	serverCmd.Flags().StringP("server.port", "p", "33555", "log analyzer server port")
+	serverCmd.Flags().StringP("server.port", "p", "33555", "log aggregator server port")
 	serverCmd.Flags().StringP("server.store", "s", "file", "Store backend for logs")
 	serverCmd.Flags().String("server.endpoint", "", "S3 enpoint")
 	serverCmd.Flags().Bool("server.path_addressing_mode", true, `S3 differentiates between "virtual hosted bucket addressing" and "path-style addressing".

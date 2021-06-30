@@ -3,10 +3,10 @@ package handler
 import (
 	"time"
 
-	"github.com/itzmanish/go-loganalyzer/internal/codec"
-	"github.com/itzmanish/go-loganalyzer/internal/logger"
-	"github.com/itzmanish/go-loganalyzer/internal/server"
-	"github.com/itzmanish/go-loganalyzer/internal/store"
+	"github.com/itzmanish/go-log-aggregator/internal/codec"
+	"github.com/itzmanish/go-log-aggregator/internal/logger"
+	"github.com/itzmanish/go-log-aggregator/internal/server"
+	"github.com/itzmanish/go-log-aggregator/internal/store"
 )
 
 type srvHandler struct {

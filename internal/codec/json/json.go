@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"io"
 
-	"github.com/itzmanish/go-loganalyzer/internal/codec"
+	"github.com/itzmanish/go-log-aggregator/internal/codec"
 )
 
 type jsonCodec struct {

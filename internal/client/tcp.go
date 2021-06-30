@@ -8,8 +8,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/itzmanish/go-loganalyzer/internal/codec"
-	jc "github.com/itzmanish/go-loganalyzer/internal/codec/json"
+	"github.com/itzmanish/go-log-aggregator/internal/codec"
+	jc "github.com/itzmanish/go-log-aggregator/internal/codec/json"
 )
 
 type tcpClient struct {
@@ -72,7 +72,7 @@ func (t *tcpClient) Send(data interface{}) error {
 
 		select {
 		case <-ctx.Done():
-			return errors.New("timeout hit")
+			terr = errors.New("timeout hit")
 
 		case err := <-ch:
 			// if the call succeeded lets bail early

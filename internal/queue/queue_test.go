@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/itzmanish/go-loganalyzer/internal/client"
-	"github.com/itzmanish/go-loganalyzer/internal/codec"
+	"github.com/itzmanish/go-log-aggregator/internal/client"
+	"github.com/itzmanish/go-log-aggregator/internal/codec"
 	"github.com/stretchr/testify/assert"
 )
 

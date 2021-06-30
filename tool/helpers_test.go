@@ -3,7 +3,7 @@ package tool
 import (
 	"testing"
 
-	"github.com/itzmanish/go-loganalyzer/config"
+	"github.com/itzmanish/go-log-aggregator/config"
 	"github.com/stretchr/testify/assert"
 )
 

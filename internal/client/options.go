@@ -3,7 +3,7 @@ package client
 import (
 	"time"
 
-	"github.com/itzmanish/go-loganalyzer/internal/codec"
+	"github.com/itzmanish/go-log-aggregator/internal/codec"
 )
 
 type Options struct {

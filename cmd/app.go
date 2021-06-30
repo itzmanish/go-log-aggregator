@@ -16,7 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/itzmanish/go-loganalyzer/config"
+	"github.com/itzmanish/go-log-aggregator/config"
 	"github.com/spf13/cobra"
 )
 
@@ -24,9 +24,8 @@ var cfgFile string
 
 // appCmd represents the base command when called without any subcommands
 var appCmd = &cobra.Command{
-	Use:   "loganalyzer",
-	Short: "loganalyzer is a log analyzer tool which provides a server and agent.",
-	Long: `loganalyzer is a log analyzer tool which provides a server and agent.
+	Use: "log-aggregator",
+	Long: `log-aggregator is a log aggregating tool which provides a server and agent.
 Server command is used to start a server. Whereas agent command is used to start 
 an agent so that logs can be sent from host machine to server and stored in File system or S3.`,
 	Version: "0.1.0",
@@ -53,7 +52,7 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	appCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/.loganalyzer.yaml)")
+	appCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/.log-aggregator.yaml)")
 
 	// // Cobra also supports local flags, which will only run
 	// // when this action is called directly.

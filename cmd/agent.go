@@ -7,20 +7,20 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/itzmanish/go-loganalyzer/config"
-	"github.com/itzmanish/go-loganalyzer/internal/client"
-	"github.com/itzmanish/go-loganalyzer/internal/codec"
-	"github.com/itzmanish/go-loganalyzer/internal/logger"
-	"github.com/itzmanish/go-loganalyzer/internal/queue"
-	"github.com/itzmanish/go-loganalyzer/internal/watcher"
-	"github.com/itzmanish/go-loganalyzer/tool"
+	"github.com/itzmanish/go-log-aggregator/config"
+	"github.com/itzmanish/go-log-aggregator/internal/client"
+	"github.com/itzmanish/go-log-aggregator/internal/codec"
+	"github.com/itzmanish/go-log-aggregator/internal/logger"
+	"github.com/itzmanish/go-log-aggregator/internal/queue"
+	"github.com/itzmanish/go-log-aggregator/internal/watcher"
+	"github.com/itzmanish/go-log-aggregator/tool"
 	"github.com/spf13/cobra"
 )
 
 // agentCmd represents the agent command
 var agentCmd = &cobra.Command{
 	Use:   "agent",
-	Short: "Log analyzer agent for collecting logs and sending to server.",
+	Short: "Log aggregator agent for collecting logs and sending to server.",
 	Run: func(cmd *cobra.Command, args []string) {
 		RunAgent(cmd, args)
 	},

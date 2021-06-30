@@ -16,7 +16,7 @@
 			"env": {},
 			"args": [
 				"--config",
-				".loganalyzer.json",
+				".log-aggregator.json",
 				"agent"
 			],
 			"showLog": true

@@ -4,8 +4,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/itzmanish/go-loganalyzer/internal/client"
-	"github.com/itzmanish/go-loganalyzer/internal/logger"
+	"github.com/itzmanish/go-log-aggregator/internal/client"
+	"github.com/itzmanish/go-log-aggregator/internal/logger"
 )
 
 type Queue interface {
@@ -51,6 +51,9 @@ func (mq *memQueue) Push(data interface{}) {
 
 func (mq *memQueue) Pop(key interface{}) {
 	mq.queue.Delete(key)
+	if mq.length == 0 {
+		return
+	}
 	mq.length--
 }
 

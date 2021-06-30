@@ -3,8 +3,8 @@ package tool
 import (
 	"os"
 
-	"github.com/itzmanish/go-loganalyzer/config"
-	"github.com/itzmanish/go-loganalyzer/internal/logger"
+	"github.com/itzmanish/go-log-aggregator/config"
+	"github.com/itzmanish/go-log-aggregator/internal/logger"
 )
 
 // FilterFileWatcher filters for file watcher and returns only watcher which are type of filesystem

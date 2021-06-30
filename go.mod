@@ -1,4 +1,4 @@
-module github.com/itzmanish/go-loganalyzer
+module github.com/itzmanish/go-log-aggregator
 
 go 1.16
 

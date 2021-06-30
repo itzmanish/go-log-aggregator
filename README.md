@@ -1,6 +1,6 @@
 ## Log aggregator
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/itzmanish/go-loganalyzer.svg)](https://pkg.go.dev/github.com/itzmanish/go-loganalyzer) [![Go](https://github.com/itzmanish/go-loganalyzer/actions/workflows/go.yml/badge.svg)](https://github.com/itzmanish/go-loganalyzer/actions/workflows/go.yml) [![codecov](https://codecov.io/gh/itzmanish/go-loganalyzer/branch/master/graph/badge.svg?token=7434KW1MLY)](https://codecov.io/gh/itzmanish/go-loganalyzer) [![Go Report Card](https://goreportcard.com/badge/github.com/itzmanish/go-loganalyzer)](https://goreportcard.com/report/github.com/itzmanish/go-loganalyzer)
+[![Go Reference](https://pkg.go.dev/badge/github.com/itzmanish/go-log-aggregator.svg)](https://pkg.go.dev/github.com/itzmanish/go-log-aggregator) [![Go](https://github.com/itzmanish/go-log-aggregator/actions/workflows/go.yml/badge.svg)](https://github.com/itzmanish/go-log-aggregator/actions/workflows/go.yml) [![codecov](https://codecov.io/gh/itzmanish/go-loganalyzer/branch/master/graph/badge.svg?token=7434KW1MLY)](https://codecov.io/gh/itzmanish/go-loganalyzer) [![Go Report Card](https://goreportcard.com/badge/github.com/itzmanish/go-log-aggregator)](https://goreportcard.com/report/github.com/itzmanish/go-log-aggregator)
 
 ## Features
 
@@ -14,10 +14,10 @@
 ## ToDos
 
 - [ ] Exponential backoff/retry
-- [ ] HTTP/GRPC endpoint for getting logs from other service
-- [ ] Filter wrapper for filtering logs
 - [ ] HTTP API for querying logs from server
 - [ ] Filter and Search on server side
+- [ ] Filter wrapper for filtering logs
+- [ ] HTTP/GRPC endpoint for getting logs from other service
 
 ## Installation
 
@@ -29,17 +29,17 @@ go get -u github.com/itzmanish/go-loganalyzer
 
 ## Usages
 
-```
-$ go-loganalyzer --config .loganalyzer_example.json
+```bash
+$ log-aggregator --config .log-aggregator.json
 
 Using config file:
-loganalyzer is a log analyzer tool which provides a server and agent.
+log-aggregator is a log analyzer tool which provides a server and agent.
 Server command is used to start a server. Whereas agent command is used to start
 an agent so that logs can be sent from host machine to server and stored in File system or S3.
 
 Usage:
-  loganalyzer [flags]
-  loganalyzer [command]
+  log-aggregator [flags]
+  log-aggregator [command]
 
 Available Commands:
   agent       Log analyzer agent for collecting logs and sending to server.
@@ -47,11 +47,11 @@ Available Commands:
   server      Log analyzer server to collect logs from agent and process it.
 
 Flags:
-      --config string   config file (default is $HOME/.config/.loganalyzer.yaml)
-  -h, --help            help for loganalyzer
-  -v, --version         version for loganalyzer
+      --config string   config file (default is $HOME/.config/.log-aggregator.yaml)
+  -h, --help            help for log-aggregator
+  -v, --version         version for log-aggregator
 
-Use "loganalyzer [command] --help" for more information about a command.
+Use "log-aggregator [command] --help" for more information about a command.
 ```
 
 ## Architecture
