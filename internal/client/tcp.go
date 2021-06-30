@@ -58,37 +58,37 @@ func (t *tcpClient) send(data interface{}) error {
 }
 
 func (t *tcpClient) Send(data interface{}) error {
-	tsend := t.send
-	ch := make(chan error, t.opts.MaxRetries+1)
+	ch := make(chan error, t.opts.MaxRetries)
 	var terr error
-
-	for i := 0; i < t.opts.MaxRetries; i++ {
+	send := func() error {
 		ctx, cancel := context.WithTimeout(context.Background(), t.opts.Timeout)
 		defer cancel()
 
-		go func() {
-			ch <- tsend(data)
-		}()
+		go func(ch chan error) {
+			ch <- t.send(data)
+		}(ch)
 
 		select {
 		case <-ctx.Done():
-			terr = errors.New("timeout hit")
+			return errors.New("timeout hit")
 
 		case err := <-ch:
-			// if the call succeeded lets bail early
-			if err == nil {
-				return nil
-			}
-			if errors.Is(err, syscall.EPIPE) {
-				t.conn.Close()
-				err = t.Connect()
-			}
-			terr = err
+			return err
 		}
 	}
-
+	for i := 0; i <= t.opts.MaxRetries; i++ {
+		err := send()
+		// if the call succeeded lets bail early
+		if err == nil {
+			return nil
+		}
+		if errors.Is(err, syscall.EPIPE) {
+			t.conn.Close()
+			err = t.Connect()
+		}
+		terr = err
+	}
 	return terr
-
 }
 
 // Recv is for receiving however it is not working
@@ -98,7 +98,6 @@ func (t *tcpClient) Recv(out interface{}) error {
 		t.conn.SetReadDeadline(time.Now().Add(t.opts.Timeout))
 	}
 	return t.opts.Codec.Read(out)
-	// return json.NewDecoder(t.conn).Decode(&out)
 }
 
 func (t *tcpClient) Read() {

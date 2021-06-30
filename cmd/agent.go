@@ -76,15 +76,17 @@ func SendLogs(w watcher.Watcher, client client.Client, q queue.Queue) {
 				Tags:      v.Tags,
 				Timestamp: v.Timestamp,
 			}, Timestamp: time.Now()}
-			err := client.Send(req)
-			if err != nil {
-				logger.Error(err)
-				if q.Length() < 1000 {
-					q.Push(req)
+			go func(req *codec.Packet) {
+				err := client.Send(req)
+				if err != nil {
+					logger.Error(err)
+					if q.Length() < 1000 {
+						q.Push(req)
+					}
+				} else {
+					sent.Store(req.ID, req)
 				}
-			} else {
-				sent.Store(req.ID, req)
-			}
+			}(req)
 		}
 	}()
 	for v := range client.Out() {

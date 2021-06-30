@@ -90,7 +90,7 @@ func (t *tcpServer) handleConnection(conn net.Conn) {
 			}
 			return
 		}
-		if msg.ID != uuid.Nil && t.opts.Handler != nil {
+		if msg.ID != uuid.Nil && len(t.opts.Handler) > 0 {
 			req := &msg
 			var er error
 			// Execute handler from last
