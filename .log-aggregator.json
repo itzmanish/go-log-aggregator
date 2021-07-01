@@ -43,11 +43,20 @@
     ],
     "max_retries": 3,
     "max_queue_size": 1000,
-    "timeout": "5s"
+    "timeout": "5s",
+    "retry_interval": "2s",
+    "queue_send_interval": "10s"
   },
   "server": {
     "host": "127.0.0.1",
-    "port": 33555,
+    "port": 33000,
+    "store": "s3",
+    "bucket": "logstore",
+    "endpoint": "http://127.0.0.1:9000",
+    "aws_access_key": "minioadmin",
+    "aws_secret_key": "minioadmin",
+    "path_addressing_mode": true,
+    "prefix": "obj",
     "max_chunk_capacity": 20,
     "flush_interval": "10s"
   }

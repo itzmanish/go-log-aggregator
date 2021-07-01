@@ -11,15 +11,15 @@ type fileStore struct {
 }
 
 func (f *fileStore) Set(key string, value interface{}) error {
-	return f.store.Set(key, value)
+	return f.store.Set(f.opts.Prefix+"/"+key, value)
 }
 
 func (f *fileStore) Get(key string, value interface{}) (bool, error) {
-	return f.store.Get(key, value)
+	return f.store.Get(f.opts.Prefix+"/"+key, value)
 }
 
 func (f *fileStore) Delete(key string) error {
-	return f.store.Delete(key)
+	return f.store.Delete(f.opts.Prefix + "/" + key)
 }
 
 func (f *fileStore) Close() error {

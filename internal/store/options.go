@@ -25,6 +25,8 @@ type Options struct {
 	// Optional (read from shared credentials file or environment variable if not set).
 	// Environment variable: "AWS_SECRET_ACCESS_KEY".
 	AWSsecretAccessKey string
+	// Prefix
+	Prefix string
 }
 
 type Option func(o *Options)
@@ -56,5 +58,11 @@ func WithAWSSecretAccessKey(sak string) Option {
 func WithPathStyleAddressing(ps bool) Option {
 	return func(o *Options) {
 		o.UsePathStyleAddressing = ps
+	}
+}
+
+func WithPrefix(prefix string) Option {
+	return func(o *Options) {
+		o.Prefix = prefix
 	}
 }

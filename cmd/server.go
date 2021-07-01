@@ -90,6 +90,9 @@ func RunServer(cmd *cobra.Command, args []string) {
 	if sak, err := cmd.Flags().GetString("server.aws_secret_key"); sak != "" && err == nil {
 		sopts = append(sopts, store.WithAWSSecretAccessKey(sak))
 	}
+	if spf, err := cmd.Flags().GetString("server.prefix"); spf != "" && err == nil {
+		sopts = append(sopts, store.WithPrefix(spf))
+	}
 
 	store, err := sProvider(sopts...)
 	if err != nil {

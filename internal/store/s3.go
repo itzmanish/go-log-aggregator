@@ -38,15 +38,15 @@ func NewS3Store(opts ...Option) (Store, error) {
 }
 
 func (s *s3store) Set(key string, value interface{}) error {
-	return s.s3.Set(key, value)
+	return s.s3.Set(s.opts.Prefix+"/"+key, value)
 }
 
 func (s *s3store) Get(key string, value interface{}) (bool, error) {
-	return s.s3.Get(key, value)
+	return s.s3.Get(s.opts.Prefix+"/"+key, value)
 }
 
 func (s *s3store) Delete(key string) error {
-	return s.s3.Delete(key)
+	return s.s3.Delete(s.opts.Prefix + "/" + key)
 }
 
 func (s *s3store) Close() error {

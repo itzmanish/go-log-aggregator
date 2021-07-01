@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"fmt"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/itzmanish/go-log-aggregator/internal/codec"
 	"github.com/itzmanish/go-log-aggregator/internal/handler"
 	"github.com/itzmanish/go-log-aggregator/internal/logger"
@@ -51,7 +53,8 @@ func (h *srvHandler) flush() {
 	if len(data) == 0 {
 		return
 	}
-	err := h.store.Set(time.Now().String(), data)
+	now := time.Now()
+	err := h.store.Set(fmt.Sprintf("%d/%d/%d/%s", now.Year(), now.Month(), now.Day(), uuid.NewString()), data)
 	if err != nil {
 		logger.Error(err)
 	}
