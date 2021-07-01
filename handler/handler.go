@@ -4,30 +4,40 @@ import (
 	"time"
 
 	"github.com/itzmanish/go-log-aggregator/internal/codec"
+	"github.com/itzmanish/go-log-aggregator/internal/handler"
 	"github.com/itzmanish/go-log-aggregator/internal/logger"
-	"github.com/itzmanish/go-log-aggregator/internal/server"
 	"github.com/itzmanish/go-log-aggregator/internal/store"
 )
 
 type srvHandler struct {
-	store  store.Store
-	buffer chan *codec.Packet
+	store         store.Store
+	buffer        chan *codec.Packet
+	flushInterval time.Duration
 }
 
-func NewHandler(s store.Store) server.Handler {
+func NewHandler(s store.Store, interval time.Duration, maxChunkCap int) handler.Handler {
 	h := &srvHandler{
-		store:  s,
-		buffer: make(chan *codec.Packet, 10),
+		store:         s,
+		buffer:        make(chan *codec.Packet, maxChunkCap),
+		flushInterval: interval,
 	}
 	go h.Flush()
 	return h
 }
 
 func (h *srvHandler) Flush() {
+	ticker := time.NewTicker(h.flushInterval)
+	defer ticker.Stop()
 	for {
-		if len(h.buffer) == cap(h.buffer) {
-			logger.Info("Buffer full. Flushing now.")
+		select {
+		case <-ticker.C:
+			logger.Info("Auto flushing after ", h.flushInterval)
 			h.flush()
+		default:
+			if len(h.buffer) == cap(h.buffer) {
+				logger.Info("Buffer full. Flushing now.")
+				h.flush()
+			}
 		}
 	}
 }
@@ -37,6 +47,9 @@ func (h *srvHandler) flush() {
 	length := len(h.buffer)
 	for i := 0; i < length; i++ {
 		data = append(data, <-h.buffer)
+	}
+	if len(data) == 0 {
+		return
 	}
 	err := h.store.Set(time.Now().String(), data)
 	if err != nil {

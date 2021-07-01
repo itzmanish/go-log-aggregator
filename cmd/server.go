@@ -18,7 +18,9 @@ package cmd
 import (
 	"os"
 	"os/signal"
+	"time"
 
+	"github.com/itzmanish/go-log-aggregator/config"
 	"github.com/itzmanish/go-log-aggregator/handler"
 	"github.com/itzmanish/go-log-aggregator/internal/codec/gob"
 	"github.com/itzmanish/go-log-aggregator/internal/logger"
@@ -94,7 +96,19 @@ func RunServer(cmd *cobra.Command, args []string) {
 		logger.Fatal(err)
 	}
 	logger.Info("Selected storage backend is ", store.String())
-	hdl := handler.NewHandler(store)
+	flushInterval, ok := config.Get("server.flush_interval").(string)
+	if !ok {
+		flushInterval = "5s"
+	}
+	maxChunkCapacity, ok := config.Get("server.max_chunk_capacity").(float64)
+	if !ok {
+		maxChunkCapacity = 10
+	}
+	flushIntervalDuration, err := time.ParseDuration(flushInterval)
+	if err != nil {
+		flushIntervalDuration = 5 * time.Second
+	}
+	hdl := handler.NewHandler(store, flushIntervalDuration, int(maxChunkCapacity))
 	s := server.NewServer(server.WithPort(port), server.WithHandler(hdl), server.WithCodec(gob.NewGobCodec()))
 	exit := make(chan os.Signal, 1)
 	signal.Notify(exit, os.Interrupt)

@@ -1,11 +1,14 @@
 package server
 
-import "github.com/itzmanish/go-log-aggregator/internal/codec"
+import (
+	"github.com/itzmanish/go-log-aggregator/internal/codec"
+	"github.com/itzmanish/go-log-aggregator/internal/handler"
+)
 
 type Options struct {
 	Port    string
 	Host    string
-	Handler []Handler
+	Handler []handler.Handler
 	Codec   codec.Codec
 }
 
@@ -23,7 +26,7 @@ func WithPort(port string) Option {
 	}
 }
 
-func WithHandler(handler Handler) Option {
+func WithHandler(handler handler.Handler) Option {
 	return func(o *Options) {
 		o.Handler = append(o.Handler, handler)
 	}

@@ -47,6 +47,8 @@
   },
   "server": {
     "host": "127.0.0.1",
-    "port": 33555
+    "port": 33555,
+    "max_chunk_capacity": 20,
+    "flush_interval": "10s"
   }
 }
