@@ -22,7 +22,7 @@
 ## Installation
 
 ```
-go get -u github.com/itzmanish/go-loganalyzer
+go get -u github.com/itzmanish/go-log-aggregator
 ```
 
 > Make sure $GOPATH/bin directory is in your path
@@ -30,10 +30,9 @@ go get -u github.com/itzmanish/go-loganalyzer
 ## Usages
 
 ```bash
-$ log-aggregator --config .log-aggregator.json
+$ go-log-aggregator -h
 
-Using config file:
-log-aggregator is a log analyzer tool which provides a server and agent.
+log-aggregator is a log aggregating tool which provides a server and agent.
 Server command is used to start a server. Whereas agent command is used to start
 an agent so that logs can be sent from host machine to server and stored in File system or S3.
 
@@ -42,9 +41,9 @@ Usage:
   log-aggregator [command]
 
 Available Commands:
-  agent       Log analyzer agent for collecting logs and sending to server.
+  agent       Log aggregator agent for collecting logs and sending to server.
   help        Help about any command
-  server      Log analyzer server to collect logs from agent and process it.
+  server      Log aggregator server to collect logs from agent and process it.
 
 Flags:
       --config string   config file (default is $HOME/.config/.log-aggregator.yaml)
