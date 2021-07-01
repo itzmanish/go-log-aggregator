@@ -1,8 +1,10 @@
 ## Log aggregator
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/itzmanish/go-log-aggregator.svg)](https://pkg.go.dev/github.com/itzmanish/go-log-aggregator) [![Go](https://github.com/itzmanish/go-log-aggregator/actions/workflows/go.yml/badge.svg)](https://github.com/itzmanish/go-log-aggregator/actions/workflows/go.yml) [![codecov](https://codecov.io/gh/itzmanish/go-loganalyzer/branch/master/graph/badge.svg?token=7434KW1MLY)](https://codecov.io/gh/itzmanish/go-loganalyzer) [![Go Report Card](https://goreportcard.com/badge/github.com/itzmanish/go-log-aggregator)](https://goreportcard.com/report/github.com/itzmanish/go-log-aggregator)
+[![Go Reference](https://pkg.go.dev/badge/github.com/itzmanish/go-log-aggregator.svg)](https://pkg.go.dev/github.com/itzmanish/go-log-aggregator) [![Go](https://github.com/itzmanish/go-log-aggregator/actions/workflows/go.yml/badge.svg)](https://github.com/itzmanish/go-log-aggregator/actions/workflows/go.yml) [![codecov](https://codecov.io/gh/itzmanish/go-log-aggregator/branch/master/graph/badge.svg?token=7434KW1MLY)](https://codecov.io/gh/itzmanish/go-log-aggregator) [![Go Report Card](https://goreportcard.com/badge/github.com/itzmanish/go-log-aggregator)](https://goreportcard.com/report/github.com/itzmanish/go-log-aggregator)
 
 ## Features
+
+---
 
 - [x] Logger
 - [x] Config
@@ -10,8 +12,11 @@
 - [x] Server
 - [x] Retry manager
 - [x] Store queue
+- [x] Buffering before storing
 
 ## ToDos
+
+---
 
 - [ ] Exponential backoff (I am not sure if we need it here.)
 - [ ] HTTP API for querying logs from server
@@ -19,7 +24,18 @@
 - [ ] Filter wrapper for filtering logs
 - [ ] HTTP/GRPC endpoint for getting logs from other service
 
+> I am not going to create a query algorithm or query api because this is unneccessary, complex and time consuming.
+> So my focus is to make it more like Fluentd. There will be plugin in future for data visualizing tools/platforms. eg: Elasticsearch,datadog,logstash etc. (Again If you got a solution of valid argument point, create a issue and I am open to discussion.)
+
+## Roadmap
+
+---
+
+Make its architecture like flutend.
+
 ## Installation
+
+---
 
 ```
 go get -u github.com/itzmanish/go-log-aggregator
@@ -28,6 +44,8 @@ go get -u github.com/itzmanish/go-log-aggregator
 > Make sure $GOPATH/bin directory is in your path
 
 ## Usages
+
+---
 
 ```bash
 $ go-log-aggregator -h
@@ -55,10 +73,14 @@ Use "log-aggregator [command] --help" for more information about a command.
 
 ## Architecture
 
+---
+
 ![LogAnalyzer](https://user-images.githubusercontent.com/12438068/123430818-3e56c380-d5e6-11eb-9020-83b00984deea.png)
 ![LogAnalyzer-agent-v0](https://user-images.githubusercontent.com/12438068/123430891-4f073980-d5e6-11eb-8b7c-ead15c3adf8f.png)
 
 ## Contributions
+
+---
 
 > Note
 > This is just a practice exercise and not production ready.
@@ -68,4 +90,6 @@ Every contributions to this project is ❤️ welcome.
 
 ## License
 
-This project is licence under [Apache Licence 2.0](https://github.com/itzmanish/go-loganalyzer/blob/master/LICENSE)
+---
+
+This project is licence under [Apache Licence 2.0](https://github.com/itzmanish/go-log-aggregator/blob/master/LICENSE)
