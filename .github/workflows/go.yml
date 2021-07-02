@@ -33,6 +33,7 @@ jobs:
         env:
           AWS_ACCESS_KEY: minioadmin
           AWS_SECRET_KEY: minioadmin
+          AWS_REGION: ap-south-1
           S3_ENDPOINT: http://127.0.0.1:9000
 
       - name: Upload coverage to Codecov
