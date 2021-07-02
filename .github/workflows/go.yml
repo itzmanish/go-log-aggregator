@@ -21,12 +21,7 @@ jobs:
           go-version: ${{ matrix.go }}
 
       - name: Setup minio
-        run: docker run -d -p 9000:9000 --name minio \
-          -e "MINIO_ACCESS_KEY=minioadmin" \
-          -e "MINIO_SECRET_KEY=minioadmin" \
-          -v /tmp/data:/data \
-          -v /tmp/config:/root/.minio \
-          minio/minio server /data
+        run: docker run -p 9000:9000 minio/minio server /data
 
       - name: Build
         run: go build -v ./...
