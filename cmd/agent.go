@@ -3,7 +3,6 @@ package cmd
 import (
 	"os"
 	"os/signal"
-	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -56,11 +55,13 @@ func RunAgent(cmd *cobra.Command, args []string) {
 	if err != nil {
 		logger.Fatal(err)
 	}
-	q := queue.NewQueue(cli, agentConfig.Timeout+5*time.Second)
+	q := queue.NewQueue(queue.WithClient(cli), queue.WithTimeInterval(agentConfig.QueueFlushInterval), queue.WithMaxQueueSize(agentConfig.MaxQueueSize))
 	exit := make(chan os.Signal, 1)
 	signal.Notify(exit, os.Interrupt)
+
 	go SendLogs(w, cli, q)
 	<-exit
+
 	err = cli.Close()
 	if err != nil {
 		logger.Error(err)
@@ -69,7 +70,6 @@ func RunAgent(cmd *cobra.Command, args []string) {
 }
 
 func SendLogs(w watcher.Watcher, client client.Client, q queue.Queue) {
-	sent := sync.Map{}
 	go func() {
 		for v := range w.Result() {
 			req := &codec.Packet{ID: uuid.New(), Cmd: "log", Body: &codec.LogBody{
@@ -79,27 +79,14 @@ func SendLogs(w watcher.Watcher, client client.Client, q queue.Queue) {
 				Timestamp: v.Timestamp,
 			}, Timestamp: time.Now()}
 			go func(req *codec.Packet) {
-				err := client.Send(req)
+				res := &codec.Packet{}
+				err := client.SendAndRecv(req, res)
 				if err != nil {
 					logger.Error(err)
-					if q.Length() < 1000 {
-						q.Push(req)
-					}
-				} else {
-					sent.Store(req.ID, req)
+					q.Push(req)
 				}
 			}(req)
 		}
 	}()
-	for v := range client.Out() {
-		_, ok := sent.Load(v.ID)
-		if ok {
-			if v.Ack {
-				sent.Delete(v.ID)
-			}
-		}
-		if v.Error != nil {
-			logger.Error(v.Error)
-		}
-	}
+
 }

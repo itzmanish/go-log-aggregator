@@ -22,23 +22,24 @@ func TestAppCmd(t *testing.T) {
 		go func() {
 			cmd.Execute()
 		}()
-		<-time.After(1 * time.Second)
+		<-time.After(100 * time.Millisecond)
 	})
 
 	t.Run("TestAgentCmd", func(t *testing.T) {
 		cmd.SetArgs([]string{"--config", "../.log-aggregator_example.json", "agent"})
 		go func() {
-			cmd.Execute()
+			err := cmd.Execute()
+			assert.Nil(t, err)
 		}()
+		<-time.After(100 * time.Millisecond)
 		f, err := os.OpenFile("../sample/log.txt", os.O_APPEND|os.O_WRONLY, 0755)
 		assert.Nil(t, err)
-		for i := 0; i < 2; i++ {
+		for i := 0; i < 20; i++ {
 			n, err := f.WriteString("foo\n")
 			assert.Nil(t, err)
 			assert.NotZero(t, n)
 		}
 		f.Close()
-		<-time.After(1 * time.Second)
 		t.Log(b.ReadString('\n'))
 	})
 }

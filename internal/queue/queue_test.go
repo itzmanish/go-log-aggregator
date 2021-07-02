@@ -24,8 +24,9 @@ func runTestServer(t *testing.T, addr chan string) error {
 		assert.Nil(t, err)
 		defer conn.Close()
 		for {
-			_, err := ioutil.ReadAll(conn)
+			db, err := ioutil.ReadAll(conn)
 			assert.Nil(t, err)
+			conn.Write(db)
 			return
 		}
 	}()
@@ -40,13 +41,14 @@ func TestQueue(t *testing.T) {
 	}
 	c, err := client.NewClient(client.WithAddress(<-addr))
 	assert.Nil(t, err)
-	q := NewQueue(c, 1*time.Millisecond)
+	q := NewQueue(WithClient(c), WithTimeInterval(1*time.Millisecond), WithMaxQueueSize(5))
 	assert.Equal(t, "Memory queue", q.String())
 	id := uuid.New()
 	t.Run("TestPush", func(t *testing.T) {
 		q.Push(&codec.Packet{
 			ID:  id,
 			Cmd: "log",
+			Ack: true,
 		})
 	})
 	<-time.After(5 * time.Millisecond)
@@ -56,10 +58,23 @@ func TestQueue(t *testing.T) {
 		assert.Equal(t, &codec.Packet{
 			ID:  id,
 			Cmd: "log",
+			Ack: true,
 		}, v)
 	})
 	t.Run("TestPop", func(t *testing.T) {
 		q.Pop(q.Length())
+	})
+	t.Run("TestOptions", func(t *testing.T) {
+		assert.Equal(t, q.Options().Client, c)
+
+	})
+	t.Run("FailWithMaxCapacity0", func(t *testing.T) {
+		q.Init(WithMaxQueueSize(0))
+		q.Push(&codec.Packet{
+			ID:  id,
+			Cmd: "log",
+			Ack: true,
+		})
 	})
 	assert.Equal(t, 0, q.Length())
 }

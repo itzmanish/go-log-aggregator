@@ -1,14 +1,11 @@
 package client
 
-import "github.com/itzmanish/go-log-aggregator/internal/codec"
-
 type Client interface {
 	Init(opts ...Option) error
-	Options() Options
-	Out() chan *codec.Packet
+	Options() *Options
 	Send(data interface{}) error
 	Recv(out interface{}) error
-	Read()
+	SendAndRecv(req interface{}, res interface{}) error
 	Close() error
 	String() string
 }

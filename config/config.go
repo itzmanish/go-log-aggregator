@@ -32,10 +32,11 @@ type ServerConfig struct {
 }
 
 type AgentConfig struct {
-	Watchers     `mapstructure:"watchers"`
-	MaxRetries   int           `mapstructure:"max_retries"`
-	MaxQueueSize int           `mapstructure:"max_queue_size"`
-	Timeout      time.Duration `mapstructure:"timeout"`
+	Watchers           `mapstructure:"watchers"`
+	MaxRetries         int           `mapstructure:"max_retries"`
+	MaxQueueSize       int           `mapstructure:"max_queue_size"`
+	Timeout            time.Duration `mapstructure:"timeout"`
+	QueueFlushInterval time.Duration `mapstructure:"queue_flush_interval"`
 }
 
 var defaultConfig Config

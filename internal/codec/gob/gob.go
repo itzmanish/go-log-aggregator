@@ -36,5 +36,5 @@ func (bc *gobCodec) Close() error {
 }
 
 func (bc *gobCodec) String() string {
-	return "Binary codec"
+	return "gob"
 }

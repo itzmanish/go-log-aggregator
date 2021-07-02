@@ -3,19 +3,16 @@ package client
 import (
 	"context"
 	"errors"
-	"io"
 	"net"
 	"syscall"
 	"time"
 
-	"github.com/itzmanish/go-log-aggregator/internal/codec"
 	jc "github.com/itzmanish/go-log-aggregator/internal/codec/json"
 )
 
 type tcpClient struct {
 	opts Options
 	conn net.Conn
-	out  chan *codec.Packet
 }
 
 func (t *tcpClient) Init(opts ...Option) error {
@@ -26,7 +23,6 @@ func (t *tcpClient) Init(opts ...Option) error {
 	if err != nil {
 		return err
 	}
-	go t.Read()
 	return nil
 }
 
@@ -45,12 +41,8 @@ func (t *tcpClient) Connect() error {
 	return conn.(*net.TCPConn).SetKeepAlivePeriod(30 * time.Second)
 }
 
-func (t *tcpClient) Options() Options {
-	return t.opts
-}
-
-func (t *tcpClient) Out() chan *codec.Packet {
-	return t.out
+func (t *tcpClient) Options() *Options {
+	return &t.opts
 }
 
 func (t *tcpClient) send(data interface{}) error {
@@ -101,22 +93,16 @@ func (t *tcpClient) Recv(out interface{}) error {
 	return t.opts.Codec.Read(out)
 }
 
-func (t *tcpClient) Read() {
-	for {
-		var msg codec.Packet
-		err := t.opts.Codec.Read(&msg)
-		if err == io.EOF {
-			t.Connect()
-			continue
-		}
-		if err == nil {
-			t.out <- &msg
-		}
+func (t *tcpClient) SendAndRecv(req interface{}, res interface{}) error {
+	err := t.Send(req)
+	if err != nil {
+		return err
 	}
+	err = t.Recv(res)
+	return err
 }
 
 func (t *tcpClient) Close() error {
-	close(t.out)
 	return t.opts.Codec.Close()
 }
 
@@ -126,7 +112,6 @@ func (t *tcpClient) String() string {
 
 func NewTcpClient(opts ...Option) (Client, error) {
 	t := &tcpClient{
-		out: make(chan *codec.Packet),
 		opts: Options{
 			Codec:      jc.NewCodec(),
 			MaxRetries: 2,

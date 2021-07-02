@@ -4,11 +4,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/itzmanish/go-log-aggregator/internal/client"
+	"github.com/itzmanish/go-log-aggregator/internal/codec"
 	"github.com/itzmanish/go-log-aggregator/internal/logger"
 )
 
 type Queue interface {
+	Init(opts ...Option)
+	Options() *Options
 	Pop(key interface{})
 	Push(value interface{})
 	Get(key interface{}) (interface{}, bool)
@@ -18,21 +20,38 @@ type Queue interface {
 
 type memQueue struct {
 	sync.RWMutex
-	queue    sync.Map
-	length   int
-	interval time.Duration
-	client   client.Client
+	queue  sync.Map
+	length int
+	opts   Options
+}
+
+func NewQueue(opts ...Option) Queue {
+	q := &memQueue{}
+	q.Init(opts...)
+	go q.handle()
+	return q
+}
+
+func (mq *memQueue) Init(opts ...Option) {
+	for _, o := range opts {
+		o(&mq.opts)
+	}
+}
+
+func (mq *memQueue) Options() *Options {
+	return &mq.opts
 }
 
 func (mq *memQueue) handle() int {
 	for {
-		<-time.After(mq.interval)
+		<-time.After(mq.opts.Interval)
 		logger.Debug("Queue [status]Total: ", mq.Length())
 		if mq.Length() > 0 {
 			go func() {
 				mq.queue.Range(func(key, value interface{}) bool {
 					logger.Info(key, value)
-					err := mq.client.Send(value)
+					res := &codec.Packet{}
+					err := mq.opts.Client.SendAndRecv(value, res)
 					if err == nil {
 						mq.Pop(key)
 					}
@@ -50,6 +69,10 @@ func (mq *memQueue) Length() int {
 }
 
 func (mq *memQueue) Push(data interface{}) {
+	if mq.Length() >= mq.opts.MaxQueueSize {
+		logger.Error("Queue is full...")
+		return
+	}
 	mq.Lock()
 	mq.length++
 	mq.Unlock()
@@ -75,13 +98,4 @@ func (mq *memQueue) Get(k interface{}) (interface{}, bool) {
 
 func (mq *memQueue) String() string {
 	return "Memory queue"
-}
-
-func NewQueue(c client.Client, interval time.Duration) Queue {
-	q := &memQueue{
-		client:   c,
-		interval: interval,
-	}
-	go q.handle()
-	return q
 }

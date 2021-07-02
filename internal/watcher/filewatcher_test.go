@@ -18,6 +18,7 @@ func TestWatcher(t *testing.T) {
 				}},
 		},
 	}
+
 	var w Watcher
 	t.Run("Create new watcher", func(t *testing.T) {
 		w = NewFileWatcher(watcherConfig)
@@ -28,12 +29,12 @@ func TestWatcher(t *testing.T) {
 	t.Run("Watch for changes", func(t *testing.T) {
 		go func() {
 			w.Watch()
-			<-time.After(time.Second * 1)
+			<-time.After(10 * time.Millisecond)
 			w.Close()
 		}()
 		f, err := os.OpenFile(watcherConfig[0].Watch, os.O_APPEND|os.O_WRONLY, 0755)
 		assert.Nil(t, err)
-		for i := 0; i < 2; i++ {
+		for i := 0; i < 10; i++ {
 			n, err := f.WriteString("foo\n")
 			assert.Nil(t, err)
 			assert.NotZero(t, n)
