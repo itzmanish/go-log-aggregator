@@ -5,14 +5,14 @@ import (
 	"github.com/itzmanish/go-log-aggregator/internal/logger"
 )
 
-type testHandler struct {
+type noopHandler struct {
 }
 
-func NewTHandler() *testHandler {
-	return &testHandler{}
+func NewTHandler() *noopHandler {
+	return &noopHandler{}
 }
 
-func (th *testHandler) Handle(req *codec.Packet) (*codec.Packet, error) {
+func (th *noopHandler) Handle(req *codec.Packet) (*codec.Packet, error) {
 	logger.Info(req)
 	return req, nil
 }
