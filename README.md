@@ -20,7 +20,7 @@
 - [ ] HTTP/GRPC endpoint for getting logs from other service
 
 > I am not going to create a query algorithm or query api because this is unneccessary, complex and time consuming.
-> So my focus is to make it more like Fluentd. There will be plugin in future for data visualizing tools/platforms. eg: Elasticsearch,datadog,logstash etc. (Again If you got a solution of valid argument point, create a issue and I am open to discussion.)
+> So my focus is to make it more like Fluentd. There will be plugin in future for data visualizing tools/platforms. eg: Elasticsearch,datadog,logstash etc. (If you have a solution, create an issue and I am open to discussion.)
 
 ## Roadmap
 
