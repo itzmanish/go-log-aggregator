@@ -46,6 +46,8 @@ type LogBody struct {
 type Packet struct {
 	// ID of packet
 	ID uuid.UUID `json:"id"`
+	// AgentID is id of agent from which logs are sent
+	AgentID uuid.UUID `json:"agent_id"`
 	// Cmd is command containing the packets
 	Cmd string `json:"cmd"`
 	// Body is body of associated with command

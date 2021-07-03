@@ -26,8 +26,11 @@ var agentCmd = &cobra.Command{
 	},
 }
 
+var agentId uuid.UUID
+
 func init() {
 	appCmd.AddCommand(agentCmd)
+	agentId = uuid.New()
 }
 
 func RunAgent(cmd *cobra.Command, args []string) {
@@ -72,7 +75,7 @@ func RunAgent(cmd *cobra.Command, args []string) {
 func SendLogs(w watcher.Watcher, client client.Client, q queue.Queue) {
 	go func() {
 		for v := range w.Result() {
-			req := &codec.Packet{ID: uuid.New(), Cmd: "log", Body: &codec.LogBody{
+			req := &codec.Packet{ID: uuid.New(), AgentID: agentId, Cmd: "log", Body: &codec.LogBody{
 				Name:      v.Name,
 				Log:       v.Log,
 				Tags:      v.Tags,
