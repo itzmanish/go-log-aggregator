@@ -26,24 +26,12 @@
             "value": "filesystem"
           }
         ]
-      },
-      {
-        "watch": "sample/log3.txt",
-        "tags": [
-          {
-            "key": "Name",
-            "value": "Sample Log 3"
-          },
-          {
-            "key": "Type",
-            "value": "service"
-          }
-        ]
       }
     ],
     "max_retries": 3,
     "max_queue_size": 1000,
-    "timeout": "5s"
+    "timeout": "5s",
+    "queue_flush_interval": "10s"
   },
   "server": {
     "host": "127.0.0.1",
